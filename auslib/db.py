@@ -1073,6 +1073,7 @@ class ScheduledChangeTable(AUSTable):
             # Columns can be specified as names or Column instances, so we must check for both.
             if "sc_id" not in kwargs["columns"] and self.sc_id not in kwargs["columns"]:
                 kwargs["columns"].append(self.sc_id)
+        # TODO: we should do unprefixing here since we don't require prefixing in insert/update/delete
         for row in super(ScheduledChangeTable, self).select(where=where, transaction=transaction, **kwargs):
             columns = [getattr(self.conditions, c) for c in itertools.chain(*self.conditions.enabled_condition_groups.values())]
             conditions = self.conditions.select([self.conditions.sc_id == row["sc_id"]], transaction=transaction, columns=columns)
@@ -1515,6 +1516,13 @@ class Rules(AUSTable):
             return True
         if self._matchesRegex(ruleChannel, fallbackChannel):
             return True
+        # HACK: test channels should inherit rules from primary channel. or should we require primary channel to use "release*"?
+        # The latter may give us less confidence that we're testing what will be live...
+        if "-" in queryChannel and queryChannel.endswith("test"):
+            # superdupermegahack
+            if self._matchesRegex(ruleChannel, queryChannel.split("-")[0]):
+                return True
+            
 
     def _versionMatchesRule(self, ruleVersion, queryVersion):
         """Decides whether a version from the rules matches an incoming version.
@@ -1669,6 +1677,44 @@ class Rules(AUSTable):
             (updateQuery["product"], updateQuery["buildTarget"], updateQuery["headerArchitecture"],
              updateQuery.get("distribution"), updateQuery.get("distVersion"), updateQuery["force"])
         rules = cache.get("rules", cache_key, getRawMatches)
+
+        # HACK: Grab rules from active scheduled changes if this is a test channel
+        if "-" in updateQuery["channel"] and updateQuery["channel"].endswith("test"):
+            where = [
+                (self.scheduled_changes.complete == False) &
+                ((self.scheduled_changes.base_product == updateQuery['product']) | (self.scheduled_changes.base_product == null())) &
+                ((self.scheduled_changes.base_buildTarget == updateQuery['buildTarget']) | (self.scheduled_changes.base_buildTarget == null())) &
+                ((self.scheduled_changes.base_headerArchitecture == updateQuery['headerArchitecture']) |
+                 (self.scheduled_changes.base_headerArchitecture == null()))
+            ]
+            # Query version 2 doesn't have distribution information, and to keep
+            # us maximally flexible, we won't match any rules that have
+            # distribution update set.
+            if updateQuery['queryVersion'] == 2:
+                where.extend([(self.scheduled_changes.base_distribution == null()) & (self.scheduled_changes.base_distVersion == null())])
+            # Only query versions 3 and 4 have distribution information, so we
+            # need to consider it.
+            if updateQuery['queryVersion'] in (3, 4):
+                where.extend([
+                    ((self.scheduled_changes.base_distribution == updateQuery['distribution']) | (self.scheduled_changes.base_distribution == null())) &
+                    ((self.scheduled_changes.base_distVersion == updateQuery['distVersion']) | (self.scheduled_changes.base_distVersion == null()))
+                ])
+
+            scheduled_rules = self.scheduled_changes.select(where=where, transaction=transaction)
+
+            new_rules = []
+            # TODO: handle scheduled changes that are adding new rules
+            for r in rules:
+                for sr in scheduled_rules:
+                    if r["rule_id"] == sr["base_rule_id"]:
+                        sr = {k.replace("base_", ""): v for k,v in sr.iteritems() if k.startswith("base_")}
+                        new_rules.append(sr)
+                        break
+                else:
+                    new_rules.append(r)
+
+            rules = new_rules
+
 
         self.log.debug("Raw matches:")
 
