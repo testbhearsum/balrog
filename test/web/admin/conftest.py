@@ -35,8 +35,6 @@ def balrogadmin_init():
   "commit":"abcdef123456"
 }
 """)
-    dbo.setDb('sqlite:///:memory:')
-    dbo.setDomainWhitelist({'good.com': ('a', 'b', 'c', 'd')})
     yield None
     os.close(version_fd)
     os.remove(version_file)
@@ -45,8 +43,11 @@ def balrogadmin_init():
 @pytest.fixture
 def balrogadmin(balrogadmin_init, sampledata):
     cache.reset()
+    dbo.setDb('sqlite:///:memory:')
+    dbo.setDomainWhitelist({'good.com': ('a', 'b', 'c', 'd')})
     dbo.create()
     with dbo.begin() as trans:
         for statement in sampledata:
             trans.execute(statement)
-    return app.test_client()
+    yield app.test_client()
+    dbo.reset()
