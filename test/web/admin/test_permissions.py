@@ -1,5 +1,9 @@
 from collections import OrderedDict
+import json
+
 import pytest
+
+from auslib.global_state import dbo
 
 
 def test_users(balrogadmin):
@@ -182,3 +186,35 @@ def test_get_permission(balrogadmin, path, request_as, code, expected):
     # No response body to test if the code wasn't 200
     if code == 200:
         assert ret.get_json() == expected
+
+
+put_permission_tests = OrderedDict({
+    "with_options": (
+        "bob",
+        "admin",
+        {
+            "options": json.dumps({
+                "products": ["a"],
+            })
+        },
+        "bill",
+        201,
+        ("admin", "bob", {"products": ["a"]}, 1),
+    ),
+})
+@pytest.mark.parametrize(
+    "username,permission,data,request_as,code,expected",
+    put_permission_tests.values(),
+    ids=list(put_permission_tests.keys()),
+)
+def test_put_permission(balrogadmin, username, permission, data, request_as, code, expected):
+    ret = balrogadmin.put("/users/{}/permissions/{}".format(username, permission),
+                          data=data, environ_base={"REMOTE_USER": request_as})
+    assert ret.status_code == code
+    if 200 <= code < 300:
+        got = dbo.permissions.t.select()\
+            .where(dbo.permissions.username == username)\
+            .where(dbo.permissions.permission == permission)\
+            .execute()\
+            .fetchone()
+        assert got == expected
