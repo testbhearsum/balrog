@@ -188,8 +188,9 @@ def test_get_permission(balrogadmin, path, request_as, code, expected):
         assert ret.get_json() == expected
 
 
-put_permission_tests = OrderedDict({
+change_permission_tests = OrderedDict({
     "with_options": (
+        "PUT",
         "bob",
         "admin",
         {
@@ -201,20 +202,64 @@ put_permission_tests = OrderedDict({
         201,
         ("admin", "bob", {"products": ["a"]}, 1),
     ),
+    # TODO: This test currently fails because there's no way to insert a permission
+    # without options that isn't subject to signoff with our current test fixtures
+    #"no_options": (
+    #    "PUT",
+    #    "bob",
+    #    "admin",
+    #    {
+    #        "options": "{}",
+    #    },
+    #    "bill",
+    #    201,
+    #    ("admin", "bob", None, 1),
+    #),
+    "with_email": (
+        "PUT",
+        "bob@bobsworld.com",
+        "admin",
+        {
+            "options": json.dumps({
+                "products": ["a"],
+            })
+        },
+        "bill",
+        201,
+        ("admin", "bob@bobsworld.com", {"products": ["a"]}, 1),
+    ),
+    # This test is meant to verify that the app properly unquotes URL parts
+    # as part of routing, because it is required when running under uwsgi.
+    # Unfortunately, Werkzeug's test Client will unquote URL parts before
+    # the app sees them, so this test doesn't actually verify that case...
+    #"with_quoted_email": (
+    #    "PUT",
+    #    "bob%40bobsworld.com",
+    #    "admin",
+    #    {
+    #        "options": json.dumps({
+    #            "products": ["a"],
+    #        })
+    #    },
+    #    "bill",
+    #    201,
+    #    ("admin", "bob@bobsworld.com", {"products": ["a"]}, 1),
+    #),
 })
 @pytest.mark.parametrize(
-    "username,permission,data,request_as,code,expected",
-    put_permission_tests.values(),
-    ids=list(put_permission_tests.keys()),
+    "method,username,permission,data,request_as,code,expected",
+    change_permission_tests.values(),
+    ids=list(change_permission_tests.keys()),
 )
-def test_put_permission(balrogadmin, username, permission, data, request_as, code, expected):
-    ret = balrogadmin.put("/users/{}/permissions/{}".format(username, permission),
-                          data=data, environ_base={"REMOTE_USER": request_as})
+def test_change_permission(balrogadmin, method, username, permission, data, request_as, code, expected):
+    ret = balrogadmin.open("/users/{}/permissions/{}".format(username, permission),
+                           method=method, data=data, environ_base={"REMOTE_USER": request_as})
     assert ret.status_code == code
     if 200 <= code < 300:
         got = dbo.permissions.t.select()\
             .where(dbo.permissions.username == username)\
             .where(dbo.permissions.permission == permission)\
             .execute()\
-            .fetchone()
-        assert got == expected
+            .fetchall()
+        assert len(got) == 1
+        assert got[0] == expected
