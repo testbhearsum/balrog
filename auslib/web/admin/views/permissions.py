@@ -1,6 +1,6 @@
 import simplejson as json
 import connexion
-from flask import Response, jsonify
+from flask import Response, jsonify, make_response
 from auslib.web.admin.views.problem import problem
 from auslib.global_state import dbo
 from auslib.web.admin.views.base import requirelogin, AdminView
@@ -100,7 +100,7 @@ class SpecificPermissionView(AdminView):
                         options_dict = None
                 dbo.permissions.insert(changed_by, transaction=transaction, username=username, permission=permission,
                                        options=options_dict)
-                return Response(status=201, response=json.dumps(dict(new_data_version=1)))
+                return make_response(jsonify(new_data_version=1), 201)
         except ValueError as e:
             self.log.warning("Bad input: %s", e.args)
             return problem(400, "Bad Request", str(e.args))

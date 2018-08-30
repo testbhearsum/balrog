@@ -22,7 +22,6 @@ class BalrogTestClient(FlaskClient):
             # this reduces a lot of json.dumps(...) usage in actual tests
             if kwargs.get("method") in ("POST", "PUT"):
                 kwargs["data"] = json.dumps(kwargs["data"])
-            print(kwargs["data"])
         return super(BalrogTestClient, self).open(*args, **kwargs)
 
 

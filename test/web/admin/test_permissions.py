@@ -200,6 +200,7 @@ change_permission_tests = OrderedDict({
         },
         "bill",
         201,
+        1,
         ("admin", "bob", {"products": ["a"]}, 1),
     ),
     # TODO: This test currently fails because there's no way to insert a permission
@@ -213,6 +214,7 @@ change_permission_tests = OrderedDict({
     #    },
     #    "bill",
     #    201,
+    #    1,
     #    ("admin", "bob", None, 1),
     #),
     "with_email": (
@@ -226,6 +228,7 @@ change_permission_tests = OrderedDict({
         },
         "bill",
         201,
+        1,
         ("admin", "bob@bobsworld.com", {"products": ["a"]}, 1),
     ),
     # This test is meant to verify that the app properly unquotes URL parts
@@ -243,19 +246,37 @@ change_permission_tests = OrderedDict({
     #    },
     #    "bill",
     #    201,
+    #    1,
     #    ("admin", "bob@bobsworld.com", {"products": ["a"]}, 1),
     #),
+    "post_with_http_remote_user": (
+        "POST",
+        "bob",
+        "release_read_only",
+        {
+            "data_version": 1,
+            "options": json.dumps({
+                "products": ["a", "b"],
+            }),
+        },
+        "bob",
+        200,
+        2,
+        ("release_read_only", "bob", {"products": ["a", "b"]}, 2),
+    ),
 })
 @pytest.mark.parametrize(
-    "method,username,permission,data,request_as,code,expected",
+    "method,username,permission,data,request_as,code,new_data_version,expected",
     change_permission_tests.values(),
     ids=list(change_permission_tests.keys()),
 )
-def test_change_permission(balrogadmin, method, username, permission, data, request_as, code, expected):
+def test_change_permission(balrogadmin, method, username, permission, data, request_as, code, new_data_version, expected):
     ret = balrogadmin.open("/users/{}/permissions/{}".format(username, permission),
                            method=method, data=data, environ_base={"REMOTE_USER": request_as})
-    assert ret.status_code == code
+    assert ret.status_code == code, ret.data
     if 200 <= code < 300:
+        print(ret.mimetype)
+        assert ret.get_json() == {"new_data_version": new_data_version}, ret.data
         got = dbo.permissions.t.select()\
             .where(dbo.permissions.username == username)\
             .where(dbo.permissions.permission == permission)\
