@@ -14,14 +14,18 @@ from auslib.blobs.base import createBlob
 class BalrogTestClient(FlaskClient):
     def open(self, *args, **kwargs):
         kwargs.setdefault("content_type", "application/json")
-        if "data" in kwargs:
+        if "data" in kwargs and kwargs["data"] is not None:
             # add csrf tokens to any requests that need them
-            if kwargs.get("method") in ("POST", "PUT", "DELETE") and "csrf_token" not in kwargs["data"]:
+            if kwargs.get("method") in ("POST", "PUT") and "csrf_token" not in kwargs["data"]:
                 kwargs["data"]["csrf_token"] = "lorem ipsum"
             # and automatically convert data for supported request types
             # this reduces a lot of json.dumps(...) usage in actual tests
             if kwargs.get("method") in ("POST", "PUT"):
                 kwargs["data"] = json.dumps(kwargs["data"])
+        if "query_string" in kwargs and kwargs["query_string"] is not None:
+            # add csrf tokens to any requests that need them
+            if kwargs.get("method") == "DELETE" and "csrf_token" not in kwargs["query_string"]:
+                kwargs["query_string"]["csrf_token"] = "lorem ipsum"
         return super(BalrogTestClient, self).open(*args, **kwargs)
 
 

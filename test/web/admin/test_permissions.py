@@ -249,7 +249,98 @@ change_permission_tests = OrderedDict({
     #    1,
     #    ("admin", "bob@bobsworld.com", {"products": ["a"]}, 1),
     #),
-    "post_with_http_remote_user": (
+    "put_requires_signoff": (
+        "PUT",
+        "nancy",
+        "admin",
+        None,
+        "bill",
+        400,
+        None,
+        None,
+    ),
+    "put_modify_existing": (
+        "PUT",
+        "bob",
+        "rule",
+        {
+            "data_version": 1,
+            "options": json.dumps({
+                "products": ["a", "b"],
+            }),
+        },
+        "bill",
+        200,
+        2,
+        ("rule", "bob", {"products": ["a", "b"]}, 2),
+    ),
+    "put_modify_without_data_version": (
+        "PUT",
+        "bob",
+        "release",
+        {
+            "options": json.dumps({
+                "products": ["different"],
+            })
+        },
+        "bill",
+        400,
+        None,
+        None,
+    ),
+    "put_bad_permission": (
+        "PUT",
+        "bob",
+        "fake",
+        None,
+        "bill",
+        400,
+        None,
+        None,
+    ),
+    "put_bad_option": (
+        "PUT",
+        "bob",
+        "admin",
+        {
+            "options": json.dumps({
+                "foo": 2,
+            })
+        },
+        "bill",
+        400,
+        None,
+        None,
+    ),
+    # Discovered in https://bugzilla.mozilla.org/show_bug.cgi?id=1237264
+    "put_bad_json": (
+        "PUT",
+        "ashanti",
+        "rule",
+        {
+            "options": '{"products":',
+        },
+        "bill",
+        400,
+        None,
+        None,
+    ),
+    "put_without_permission": (
+        "PUT",
+        "bob",
+        "rule",
+        {
+            "data_version": 1,
+            "options": json.dumps({
+                "actions": ["create"],
+            }),
+        },
+        "julie",
+        403,
+        None,
+        None,
+    ),
+    "post": (
         "POST",
         "bob",
         "release_read_only",
@@ -259,10 +350,48 @@ change_permission_tests = OrderedDict({
                 "products": ["a", "b"],
             }),
         },
-        "bob",
+        "bill",
         200,
         2,
         ("release_read_only", "bob", {"products": ["a", "b"]}, 2),
+    ),
+    "post_non_existant": (
+        "POST",
+        "bill",
+        "rule",
+        {
+            "data_version": 1,
+            "options": "",
+        },
+        "bill",
+        404,
+        None,
+        None,
+    ),
+    "post_bad_input": (
+        "POST",
+        "bill",
+        "admin",
+        None,
+        "bill",
+        400,
+        None,
+        None,
+    ),
+    "post_without_permission": (
+        "POST",
+        "bob",
+        "rule",
+        {
+            "data_version": 1,
+            "options": json.dumps({
+                "actions": ["create"],
+            }),
+        },
+        "shane",
+        403,
+        None,
+        None,
     ),
 })
 @pytest.mark.parametrize(
@@ -275,7 +404,6 @@ def test_change_permission(balrogadmin, method, username, permission, data, requ
                            method=method, data=data, environ_base={"REMOTE_USER": request_as})
     assert ret.status_code == code, ret.data
     if 200 <= code < 300:
-        print(ret.mimetype)
         assert ret.get_json() == {"new_data_version": new_data_version}, ret.data
         got = dbo.permissions.t.select()\
             .where(dbo.permissions.username == username)\
@@ -284,3 +412,68 @@ def test_change_permission(balrogadmin, method, username, permission, data, requ
             .fetchall()
         assert len(got) == 1
         assert got[0] == expected
+
+
+delete_permission_tests = {
+    "delete": (
+        "bob",
+        "release_read_only",
+        {
+            "data_version": 1,
+        },
+        "bill",
+        200,
+    ),
+    "delete_non_existant": (
+        "bill",
+        "release",
+        {
+            "data_version": 1,
+        },
+        "bill",
+        404,
+    ),
+    "delete_bad_input": (
+        "bill",
+        "admin",
+        None,
+        "bill",
+        400,
+    ),
+    "delete_without_permission": (
+        "bob",
+        "permission",
+        {
+            "data_version": 1,
+        },
+        "ashanti",
+        403,
+    ),
+    "delete_requires_signoff": (
+        "bob",
+        "release",
+        {
+            "data_version": 1,
+        },
+        "bill",
+        400,
+    ),
+}
+@pytest.mark.parametrize(
+    "username,permission,query_string,request_as,code",
+    delete_permission_tests.values(),
+    ids=list(delete_permission_tests.keys()),
+)
+def test_delete_permission(balrogadmin, username, permission, query_string, request_as, code):
+    ret = balrogadmin.delete("/users/{}/permissions/{}".format(username, permission),
+                             query_string=query_string, environ_base={"REMOTE_USER": request_as})
+    assert ret.status_code == code, ret.data
+    got = dbo.permissions.t.select()\
+        .where(dbo.permissions.username == username)\
+        .where(dbo.permissions.permission == permission)\
+        .execute()\
+        .fetchall()
+    if (200 <= code < 300) or code == 404:
+        assert len(got) == 0
+    else:
+        assert len(got) == 1
