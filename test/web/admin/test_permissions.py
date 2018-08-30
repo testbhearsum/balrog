@@ -20,7 +20,7 @@ def test_users(balrogadmin):
 
 get_user_tests = OrderedDict({
     "current_user_with_permissions_and_roles": (
-        "current",
+        "/users/current",
         "bill",
         200,
         {
@@ -41,7 +41,7 @@ get_user_tests = OrderedDict({
         },
     ),
     "current_user_no_roles": (
-        "current",
+        "/users/current",
         "billy",
         200,
         {
@@ -58,7 +58,7 @@ get_user_tests = OrderedDict({
         },
     ),
     "current_user_no_permissions_or_roles": (
-        "current",
+        "/users/current",
         "vikas",
         200,
         {
@@ -68,13 +68,13 @@ get_user_tests = OrderedDict({
         },
     ),
     "named_user_not_as_admin": (
-        "vikas",
+        "/users/vikas",
         "vikas",
         404,
         None,
     ),
     "named_user_as_admin": (
-        "mary",
+        "/users/mary",
         "bill",
         200,
         {
@@ -95,7 +95,7 @@ get_user_tests = OrderedDict({
         },
     ),
     "named_user_with_specific_permission": (
-        "mary",
+        "/users/mary",
         "bob",
         200,
         {
@@ -116,27 +116,68 @@ get_user_tests = OrderedDict({
         },
     ),
     "named_user_without_permission": (
-        "bill",
+        "/users/bill",
         "mary",
         403,
         None,
     ),
     "non_existant_user": (
-        "uhetonhueo",
+        "/users/uhetonhueo",
         "bob",
         404,
         None,
     ),
 })
 @pytest.mark.parametrize(
-    "username,request_as,code,expected",
+    "path,request_as,code,expected",
     get_user_tests.values(),
     # In Python 3, OrderedDict.keys()' returns a data structure that
     # doesn't support indexing, which pytest requires
     ids=list(get_user_tests.keys()),
 )
-def test_get_user(balrogadmin, username, request_as, code, expected):
-    ret = balrogadmin.get("/users/{}".format(username), environ_base={"REMOTE_USER": request_as})
+def test_get_user(balrogadmin, path, request_as, code, expected):
+    ret = balrogadmin.get(path, environ_base={"REMOTE_USER": request_as})
+    assert ret.status_code == code
+    # No response body to test if the code wasn't 200
+    if code == 200:
+        assert ret.get_json() == expected
+
+
+get_permission_tests = OrderedDict({
+    "collection": (
+        "/users/bill/permissions",
+        None,
+        200,
+        {
+            "admin": {
+                "options": None,
+                "data_version": 1,
+            }
+        },
+    ),
+    "get": (
+        "/users/bill/permissions/admin",
+        None,
+        200,
+        {
+            "options": None,
+            "data_version": 1,
+        },
+    ),
+    "get_non_existant": (
+        "/users/bill/permissions/rule",
+        None,
+        404,
+        None,
+    ),
+})
+@pytest.mark.parametrize(
+    "path,request_as,code,expected",
+    get_permission_tests.values(),
+    ids=list(get_permission_tests.keys()),
+)
+def test_get_permission(balrogadmin, path, request_as, code, expected):
+    ret = balrogadmin.get(path, environ_base={"REMOTE_USER": request_as})
     assert ret.status_code == code
     # No response body to test if the code wasn't 200
     if code == 200:
