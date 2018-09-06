@@ -402,9 +402,9 @@ change_permission_tests = OrderedDict({
 def test_change_permission(balrogadmin, method, username, permission, data, request_as, code, new_data_version, expected):
     ret = balrogadmin.open("/users/{}/permissions/{}".format(username, permission),
                            method=method, data=data, environ_base={"REMOTE_USER": request_as})
-    assert ret.status_code == code, ret.data
+    assert ret.status_code == code
     if 200 <= code < 300:
-        assert ret.get_json() == {"new_data_version": new_data_version}, ret.data
+        assert ret.get_json() == {"new_data_version": new_data_version}
         got = dbo.permissions.t.select()\
             .where(dbo.permissions.username == username)\
             .where(dbo.permissions.permission == permission)\
@@ -467,7 +467,7 @@ delete_permission_tests = {
 def test_delete_permission(balrogadmin, username, permission, query_string, request_as, code):
     ret = balrogadmin.delete("/users/{}/permissions/{}".format(username, permission),
                              query_string=query_string, environ_base={"REMOTE_USER": request_as})
-    assert ret.status_code == code, ret.data
+    assert ret.status_code == code
     got = dbo.permissions.t.select()\
         .where(dbo.permissions.username == username)\
         .where(dbo.permissions.permission == permission)\
@@ -477,3 +477,27 @@ def test_delete_permission(balrogadmin, username, permission, query_string, requ
         assert len(got) == 0
     else:
         assert len(got) == 1
+
+
+get_permission_scheduled_changes_tests = {
+    "get": (
+        {},
+        5,
+    ),
+    "get_with_completed": (
+        {"all": 1},
+        6,
+    ),
+}
+@pytest.mark.parametrize(
+    "query_string,expected",
+    get_permission_scheduled_changes_tests.values(),
+    ids=list(get_permission_scheduled_changes_tests.keys()),
+)
+def test_get_permission_scheduled_changes(balrogadmin, query_string, expected):
+    ret = balrogadmin.get("/scheduled_changes/permissions", query_string=query_string)
+    got = ret.get_json()
+    assert got["count"] == expected
+    for sc in got["scheduled_changes"]:
+        if sc["change_type"] != "insert" and not sc["complete"]:
+            assert "original_row" in sc
