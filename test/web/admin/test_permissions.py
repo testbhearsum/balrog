@@ -1,5 +1,11 @@
 from collections import OrderedDict
 import json
+import six
+
+if six.PY2:
+    import mock
+else:
+    from unittest import mock
 
 import pytest
 
@@ -501,3 +507,57 @@ def test_get_permission_scheduled_changes(balrogadmin, query_string, expected):
     for sc in got["scheduled_changes"]:
         if sc["change_type"] != "insert" and not sc["complete"]:
             assert "original_row" in sc
+
+
+add_permission_scheduled_change_tests = {
+    "change_existing_permission": (
+        {
+            "when": 400000000,
+            "permission": "rule",
+            "username": "bob",
+            "options": None,
+            "data_version": 1,
+            "change_type": "update",
+        },
+        "bill",
+        200,
+        {
+            "sc_id": 7,
+            "scheduled_by": "bill",
+            "change_type": "update",
+            "complete": False,
+            "data_version": 1,
+            "base_permission": "rule",
+            "base_username": "bob",
+            "base_options": None,
+            "base_data_version": 1,
+        },
+        {
+            "sc_id": 7,
+            "data_version": 1,
+            "when": 400000000,
+        },
+    ),
+}
+@pytest.mark.parametrize(
+    "data,request_as,code,expected,cond_expected",
+    add_permission_scheduled_change_tests.values(),
+    ids=list(add_permission_scheduled_change_tests.keys()),
+)
+def test_add_permission_scheduled_change(balrogadmin, mocker, data, request_as, code, expected, cond_expected):
+    with mocker.patch("time.time", mock.MagicMock(return_value=300)):
+        ret = balrogadmin.post("/scheduled_changes/permissions", data=data, environ_base={"REMOTE_USER": request_as})
+        assert ret.status_code == code
+        if 200 <= code <= 300:
+            assert ret.get_json()["sc_id"] == 7
+            assert "signoffs" in ret.get_json()
+            got = dbo.permissions.scheduled_changes.t.select()\
+                .where(dbo.permissions.scheduled_changes.sc_id == 7)\
+                .execute()\
+                .fetchall()[0]
+            assert dict(got) == expected
+            cond = dbo.permissions.scheduled_changes.conditions.t.select()\
+                .where(dbo.permissions.scheduled_changes.conditions.sc_id == 7)\
+                .execute()\
+                .fetchall()[0]
+            assert dict(cond) == cond_expected
