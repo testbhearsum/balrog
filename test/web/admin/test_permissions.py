@@ -485,6 +485,7 @@ def test_delete_permission(balrogadmin, username, permission, query_string, requ
         assert len(got) == 1
 
 
+# TODO: not currently doing full response validation...
 get_permission_scheduled_changes_tests = {
     "get": (
         {},
