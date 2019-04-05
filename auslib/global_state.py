@@ -9,12 +9,12 @@
 
 
 class DbWrapper(object):
-
     def __init__(self):
         self.db = None
 
     def setDb(self, dburi):
         from auslib.db import AUSDatabase
+
         self.db = AUSDatabase(dburi)
 
     def __getattr__(self, name):
@@ -30,4 +30,5 @@ dbo = DbWrapper()
 # wrapper that does nothing if caching is disabled, and uses a 3rd party
 # caching library if it is enabled.
 from auslib.util.cache import MaybeCacher
+
 cache = MaybeCacher()

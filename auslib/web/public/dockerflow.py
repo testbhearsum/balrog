@@ -1,6 +1,5 @@
 from flask import current_app
-from auslib.dockerflow import (
-    heartbeat_response, lbheartbeat_response, get_version)
+from auslib.dockerflow import heartbeat_response, lbheartbeat_response, get_version
 
 
 def heartbeat():

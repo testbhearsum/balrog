@@ -13,6 +13,7 @@ from auslib.db import AUSDatabase
 
 if __name__ == "__main__":
     from optparse import OptionParser
+
     doc = "%s --db dburi -r release-name" % sys.argv[0]
     parser = OptionParser(doc)
     parser.add_option("-d", "--db", dest="db", default=None, help="database to manage, in URI format")

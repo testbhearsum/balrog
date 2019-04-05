@@ -13,6 +13,7 @@ from auslib.db import AUSDatabase
 
 if __name__ == "__main__":
     from optparse import OptionParser
+
     doc = "%s --db dburi -r release-name -v version -p product foo.json" % sys.argv[0]
     parser = OptionParser(doc)
     parser.add_option("-d", "--db", dest="db", default=None, help="database to manage, in URI format")
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     try:
         old = db.releases.getReleases(name=options.release)[0]
         db.releases.updateRelease(
-            name=options.release, product=options.product, version=options.version, changed_by='import-json', old_data_version=old['data_version'], blob=blob
+            name=options.release, product=options.product, version=options.version, changed_by="import-json", old_data_version=old["data_version"], blob=blob
         )
     except IndexError:
-        db.releases.addRelease(name=options.release, product=options.product, version=options.version, blob=blob, changed_by='import-json')
+        db.releases.addRelease(name=options.release, product=options.product, version=options.version, blob=blob, changed_by="import-json")
