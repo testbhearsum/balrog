@@ -1,4 +1,5 @@
 import logging
+
 # to satisfy flake8 with the type hinting
 from typing import AnyStr, Union
 

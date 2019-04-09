@@ -3,12 +3,15 @@ import simplejson as json
 from flask import Response, jsonify
 
 from auslib.global_state import dbo
-from auslib.web.admin.views.base import (AdminView, handleGeneralExceptions,
-                                         requirelogin)
+from auslib.web.admin.views.base import AdminView, handleGeneralExceptions, requirelogin
 from auslib.web.admin.views.problem import problem
 from auslib.web.admin.views.scheduled_changes import (
-    EnactScheduledChangeView, ScheduledChangeHistoryView, ScheduledChangesView,
-    ScheduledChangeView, SignoffsView)
+    EnactScheduledChangeView,
+    ScheduledChangeHistoryView,
+    ScheduledChangesView,
+    ScheduledChangeView,
+    SignoffsView,
+)
 
 __all__ = ["UsersView", "PermissionsView", "SpecificPermissionView"]
 

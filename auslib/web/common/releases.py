@@ -8,8 +8,7 @@ from sqlalchemy.sql.expression import null
 
 from auslib.global_state import dbo
 from auslib.web.common.csrf import get_csrf_headers
-from auslib.web.common.history import (HistoryHelper,
-                                       annotateRevisionDifferences)
+from auslib.web.common.history import HistoryHelper, annotateRevisionDifferences
 
 log = logging.getLogger(__name__)
 

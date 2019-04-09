@@ -10,13 +10,16 @@ from sqlalchemy.sql.expression import null
 from auslib.blobs.base import BlobValidationError, createBlob
 from auslib.db import OutdatedDataError, ReadOnlyError
 from auslib.global_state import dbo
-from auslib.web.admin.views.base import (AdminView, requirelogin,
-                                         serialize_signoff_requirements)
+from auslib.web.admin.views.base import AdminView, requirelogin, serialize_signoff_requirements
 from auslib.web.admin.views.history import HistoryView
 from auslib.web.admin.views.problem import problem
 from auslib.web.admin.views.scheduled_changes import (
-    EnactScheduledChangeView, ScheduledChangeHistoryView, ScheduledChangesView,
-    ScheduledChangeView, SignoffsView)
+    EnactScheduledChangeView,
+    ScheduledChangeHistoryView,
+    ScheduledChangesView,
+    ScheduledChangeView,
+    SignoffsView,
+)
 from auslib.web.common.releases import release_list, serialize_releases
 
 __all__ = ["SingleReleaseView", "SingleLocaleView"]

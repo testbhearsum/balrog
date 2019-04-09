@@ -12,19 +12,28 @@ import mock
 import pytest
 from six import assertRaisesRegex
 from six.moves import xrange
-from sqlalchemy import (Column, Integer, MetaData, String, Table,
-                        create_engine, select)
+from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine, select
 from sqlalchemy.engine.reflection import Inspector
 
 import migrate.versioning.api
 from auslib.blobs.apprelease import ReleaseBlobV1
 from auslib.blobs.base import BlobValidationError, createBlob
-from auslib.db import (AlreadySetupError, AUSDatabase, AUSTable,
-                       AUSTransaction, ChangeScheduledError,
-                       MismatchedDataVersionError, OutdatedDataError,
-                       PermissionDeniedError, ReadOnlyError,
-                       SignoffRequiredError, SignoffsTable, TransactionError,
-                       UpdateMergeError, verify_signoffs)
+from auslib.db import (
+    AlreadySetupError,
+    AUSDatabase,
+    AUSTable,
+    AUSTransaction,
+    ChangeScheduledError,
+    MismatchedDataVersionError,
+    OutdatedDataError,
+    PermissionDeniedError,
+    ReadOnlyError,
+    SignoffRequiredError,
+    SignoffsTable,
+    TransactionError,
+    UpdateMergeError,
+    verify_signoffs,
+)
 from auslib.global_state import cache, dbo
 from migrate.versioning.api import version
 

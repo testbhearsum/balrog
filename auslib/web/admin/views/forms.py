@@ -5,8 +5,7 @@ import simplejson as json
 from flask_wtf import FlaskForm as Form
 from six import text_type
 from wtforms import BooleanField, IntegerField, SelectField, StringField
-from wtforms.validators import (InputRequired, Length, NumberRange, Optional,
-                                Regexp, ValidationError)
+from wtforms.validators import InputRequired, Length, NumberRange, Optional, Regexp, ValidationError
 from wtforms.widgets import FileInput, HiddenInput, TextInput
 
 from auslib.util.comparison import get_op

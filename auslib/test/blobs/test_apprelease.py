@@ -12,12 +12,20 @@ import pytest
 from six import assertCountEqual
 
 from auslib.AUS import FAIL, SUCCEED
-from auslib.blobs.apprelease import (DesupportBlob, ProofXMLMixin,
-                                     ReleaseBlobBase, ReleaseBlobV1,
-                                     ReleaseBlobV2, ReleaseBlobV3,
-                                     ReleaseBlobV4, ReleaseBlobV5,
-                                     ReleaseBlobV6, ReleaseBlobV8,
-                                     ReleaseBlobV9, UnifiedFileUrlsMixin)
+from auslib.blobs.apprelease import (
+    DesupportBlob,
+    ProofXMLMixin,
+    ReleaseBlobBase,
+    ReleaseBlobV1,
+    ReleaseBlobV2,
+    ReleaseBlobV3,
+    ReleaseBlobV4,
+    ReleaseBlobV5,
+    ReleaseBlobV6,
+    ReleaseBlobV8,
+    ReleaseBlobV9,
+    UnifiedFileUrlsMixin,
+)
 from auslib.blobs.base import BlobValidationError, createBlob
 from auslib.errors import BadDataError
 from auslib.global_state import dbo

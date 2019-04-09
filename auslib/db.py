@@ -1,4 +1,3 @@
-import itertools
 import logging
 import pprint
 import re
@@ -7,12 +6,12 @@ import time
 from collections import defaultdict
 from copy import copy
 from os import path
+import itertools
 
 import simplejson as json
 import sqlalchemy.types
 from six import integer_types, iteritems, reraise, string_types, text_type
-from sqlalchemy import (BigInteger, Boolean, Column, Integer, MetaData, String,
-                        Table, Text, create_engine, func, join, select)
+from sqlalchemy import BigInteger, Boolean, Column, Integer, MetaData, String, Table, Text, create_engine, func, join, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.interfaces import PoolListener
 from sqlalchemy.sql.expression import null
@@ -21,10 +20,17 @@ import migrate.versioning.api
 import migrate.versioning.schema
 from auslib.blobs.base import createBlob, merge_dicts
 from auslib.global_state import cache
-from auslib.util.rulematching import (matchBoolean, matchBuildID, matchChannel,
-                                      matchCsv, matchLocale, matchMemory,
-                                      matchRegex, matchSimpleExpression,
-                                      matchVersion)
+from auslib.util.rulematching import (
+    matchBoolean,
+    matchBuildID,
+    matchChannel,
+    matchCsv,
+    matchLocale,
+    matchMemory,
+    matchRegex,
+    matchSimpleExpression,
+    matchVersion,
+)
 from auslib.util.timestamp import getMillisecondTimestamp
 
 
