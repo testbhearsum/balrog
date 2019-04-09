@@ -12,8 +12,8 @@ import sys
 sys.path.append(path.join(path.dirname(__file__), ".."))
 sys.path.append(path.join(path.dirname(__file__), path.join("..", "vendor", "lib", "python")))
 
-from auslib.db import AUSDatabase # NOQA
-from auslib.blobs.base import createBlob # NOQA
+from auslib.db import AUSDatabase  # NOQA
+from auslib.blobs.base import createBlob  # NOQA
 
 logging.basicConfig(level=logging.INFO)
 
@@ -35,11 +35,11 @@ AND (STR_TO_DATE(RIGHT(name, 14), "%%%%Y%%%%m%%%%d%%%%H%%%%i%%%%S") < NOW() - IN
     )
     if dryrun:
         todelete = trans.execute("SELECT name FROM releases" + query).fetchall()
-        print("Releases rows to be deleted:")
+        print ("Releases rows to be deleted:")
         if todelete:
-            print("\n".join(itertools.chain(*todelete)))
+            print ("\n".join(itertools.chain(*todelete)))
         else:
-            print("  - None")
+            print ("  - None")
     else:
         trans.execute("DELETE releases FROM releases" + query)
 
@@ -72,9 +72,9 @@ def cleanup_releases_history(trans, dryrun=True):
         if dryrun:
             todelete = trans.execute(query).fetchall()
             if todelete:
-                print("releases_history (%s) rows to be deleted:" % name)
+                print ("releases_history (%s) rows to be deleted:" % name)
                 for key, group in itertools.groupby(todelete, lambda x: x[0]):
-                    print("  - %s: %s history rows" % (key, len(list(group))))
+                    print ("  - %s: %s history rows" % (key, len(list(group))))
         else:
             del_query = (
                 """
@@ -89,10 +89,10 @@ def cleanup_releases_history(trans, dryrun=True):
 
             results = trans.execute(del_query)
             if results:
-                print("Deleted %s '%s' records" % (results.rowcount, name))
+                print ("Deleted %s '%s' records" % (results.rowcount, name))
                 total_deleted += results.rowcount
 
-    print("Total Deleted: %d" % total_deleted)
+    print ("Total Deleted: %d" % total_deleted)
 
 
 def chunk_list(list_object, n):
@@ -100,7 +100,7 @@ def chunk_list(list_object, n):
     Yield successive n-sized chunks from list_object.
     """
     for i in xrange(0, len(list_object), n):
-        yield list_object[i:i+n]
+        yield list_object[i : i + n]
 
 
 def mysql_command(host, user, password, db, cmd):

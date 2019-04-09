@@ -12,12 +12,12 @@ def validate_responses_helper(dtd, urls):
         if valid:
             assert True
         else:
-            print(dtd.error_log.filter_from_errors())
+            print (dtd.error_log.filter_from_errors())
             assert False
 
 
 def test_update_addon_responses(server_url):
-    print(server_url)
+    print (server_url)
     addon_urls = [
         server_url + "/update/3/SystemAddons/44.0/20160310153207/Darwin_x86_64-gcc3-u-i386-x86_64/en-GB/release/Darwin%2014.5.0/default/default/update.xml"
     ]
@@ -51,5 +51,5 @@ def test_update_with_no_addons():
     if valid:
         assert True
     else:
-        print(dtd.error_log.filter_from_errors())
+        print (dtd.error_log.filter_from_errors())
         assert False
