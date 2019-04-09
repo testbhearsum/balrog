@@ -1,9 +1,9 @@
-import aiohttp
 import json
 import logging
 import os
 import time
 
+import aiohttp
 
 default_headers = {"Accept-Encoding": "application/json", "Accept": "application/json", "Content-Type": "application/json"}
 # Refresh the tokens 5 minutes before they expire

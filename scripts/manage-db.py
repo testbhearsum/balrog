@@ -2,18 +2,20 @@
 
 import itertools
 import logging
+import sys
 from os import path, popen
+
 from six.moves import xrange
 from sqlalchemy.engine.url import make_url
-import sys
+
+from auslib.blobs.base import createBlob  # NOQA
+from auslib.db import AUSDatabase  # NOQA
 
 # Our parent directory should contain the auslib module, so we add it to the
 # PYTHONPATH to make things easier on consumers.
 sys.path.append(path.join(path.dirname(__file__), ".."))
 sys.path.append(path.join(path.dirname(__file__), path.join("..", "vendor", "lib", "python")))
 
-from auslib.db import AUSDatabase  # NOQA
-from auslib.blobs.base import createBlob  # NOQA
 
 logging.basicConfig(level=logging.INFO)
 

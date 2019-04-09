@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 
-import os
-import os.path
+import difflib
 import glob
 import logging
+import os
+import os.path
 import re
-import difflib
-import time
 import site
+import time
+
+from auslib.AUS import AUS as AUS_Class  # NOQA
+from auslib.global_state import dbo  # NOQA
 
 try:
     import json
@@ -20,8 +23,6 @@ mydir = os.path.dirname(os.path.abspath(__file__))
 site.addsitedir(os.path.join(mydir, ".."))
 site.addsitedir(os.path.join(mydir, "..", "vendor/lib/python"))
 
-from auslib.AUS import AUS as AUS_Class  # NOQA
-from auslib.global_state import dbo  # NOQA
 
 log = logging.getLogger(__name__)
 

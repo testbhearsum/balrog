@@ -1,16 +1,15 @@
-import jsonschema
 import logging
 from os import path
+
+import jsonschema
 import simplejson as json
-import yaml
-
 from six import string_types, text_type
-
-from auslib.AUS import isSpecialURL
-from auslib.global_state import cache
 
 # To enable shared jsonschema validators
 import auslib.util.jsonschema_validators  # noqa
+import yaml
+from auslib.AUS import isSpecialURL
+from auslib.global_state import cache
 
 
 class BlobValidationError(ValueError):
