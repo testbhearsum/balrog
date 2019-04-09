@@ -7,15 +7,15 @@ from six.moves import xrange
 from sqlalchemy.engine.url import make_url
 import sys
 
-logging.basicConfig(level=logging.INFO)
-
 # Our parent directory should contain the auslib module, so we add it to the
 # PYTHONPATH to make things easier on consumers.
 sys.path.append(path.join(path.dirname(__file__), ".."))
 sys.path.append(path.join(path.dirname(__file__), path.join("..", "vendor", "lib", "python")))
 
-from auslib.db import AUSDatabase
-from auslib.blobs.base import createBlob
+from auslib.db import AUSDatabase # NOQA
+from auslib.blobs.base import createBlob # NOQA
+
+logging.basicConfig(level=logging.INFO)
 
 
 def cleanup_releases(trans, nightly_age, dryrun=True):
@@ -100,7 +100,7 @@ def chunk_list(list_object, n):
     Yield successive n-sized chunks from list_object.
     """
     for i in xrange(0, len(list_object), n):
-        yield list_object[i : i + n]
+        yield list_object[i:i+n]
 
 
 def mysql_command(host, user, password, db, cmd):

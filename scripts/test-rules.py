@@ -3,6 +3,7 @@
 import os
 import os.path
 import glob
+import logging
 import re
 import difflib
 import time
@@ -10,7 +11,6 @@ import site
 
 try:
     import json
-
     assert json  # to shut pyflakes up
 except Exception:
     import simplejson as json
@@ -19,10 +19,8 @@ mydir = os.path.dirname(os.path.abspath(__file__))
 site.addsitedir(os.path.join(mydir, ".."))
 site.addsitedir(os.path.join(mydir, "..", "vendor/lib/python"))
 
-from auslib.AUS import AUS as AUS_Class
-from auslib.global_state import dbo
-
-import logging
+from auslib.AUS import AUS as AUS_Class # NOQA
+from auslib.global_state import dbo # NOQA
 
 log = logging.getLogger(__name__)
 

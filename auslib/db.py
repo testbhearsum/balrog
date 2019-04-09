@@ -12,6 +12,7 @@ from six import integer_types, iteritems, string_types, reraise, text_type
 
 from sqlalchemy import Table, Column, Integer, Text, String, MetaData, create_engine, select, BigInteger, Boolean, join, func
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.interfaces import PoolListener
 from sqlalchemy.sql.expression import null
 import sqlalchemy.types
 
@@ -2581,9 +2582,6 @@ def make_change_notifier_for_read_only(relayhost, port, username, password, to_a
 # lets us put the database in a stricter mode that will disallow things like
 # automatic data truncation.
 # From http://www.enricozini.org/2012/tips/sa-sqlmode-traditional/
-from sqlalchemy.interfaces import PoolListener
-
-
 class SetSqlMode(PoolListener):
     def connect(self, dbapi_con, connection_record):
         cur = dbapi_con.cursor()

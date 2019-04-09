@@ -16,6 +16,8 @@ try:
 except ImportError:  # pragma: no cover
     from urllib.parse import unquote
 
+from auslib.dockerflow import create_dockerflow_endpoints
+
 
 log = logging.getLogger(__name__)
 
@@ -36,8 +38,6 @@ connexion_app = connexion.App(__name__, validator_map=validator_map, debug=False
 connexion_app.add_api(spec, strict_validation=True)
 app = connexion_app.app
 sentry = Sentry()
-
-from auslib.dockerflow import create_dockerflow_endpoints
 
 create_dockerflow_endpoints(app)
 
