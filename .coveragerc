@@ -1,2 +1,7 @@
 [run]
-omit = .tox/*
+branch = True
+include = auslib/*
+omit = auslib/migrate/*
+
+[report]
+show_missing = True
