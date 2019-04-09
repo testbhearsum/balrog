@@ -223,7 +223,7 @@ class AUSTransaction(object):
 
     def execute(self, statement):
         try:
-            self.log.debug("Attempting to execute %s" % statement)
+            self.log.debug('Attempting to execute %s' % statement)
             return self.conn.execute(statement)
         except Exception:
             self.log.debug("Caught exception")
