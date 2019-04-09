@@ -2012,7 +2012,7 @@ class ClientTestCompactXML(ClientTestCommon):
         ret = self.client.get("/update/6/b/1.0/20181212121212/p/l/a/a/a/a/a/update.xml")
         self.assertUpdateTextEqual(
             ret,
-            u"""<?xml version="1.0"?>
+            """<?xml version="1.0"?>
 <updates>
     <update type="minor" version="1.0" extensionVersion="1.0" buildID="30000101000000">
         <patch type="complete" URL="http://a.com/z" hashFunction="sha512" hashValue="4" size="3"/>
@@ -2024,6 +2024,6 @@ class ClientTestCompactXML(ClientTestCommon):
         ret = self.client.get("/update/6/b/1.0/20190103220533/p/l/a/a/a/a/a/update.xml")
         self.assertUpdateTextEqual(
             ret,
-            u'<?xml version="1.0"?><updates><update type="minor" version="1.0" extensionVersion="1.0" buildID="30000101000000">'
-            u'<patch type="complete" URL="http://a.com/z" hashFunction="sha512" hashValue="4" size="3"/></update></updates>',
+            '<?xml version="1.0"?><updates><update type="minor" version="1.0" extensionVersion="1.0" buildID="30000101000000">'
+            '<patch type="complete" URL="http://a.com/z" hashFunction="sha512" hashValue="4" size="3"/></update></updates>',
         )

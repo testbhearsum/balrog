@@ -843,8 +843,8 @@ class TestRuleHistoryView(ViewTest):
         got = ret.get_json()
         self.assertEqual(ret.status_code, 200, msg=ret.get_data())
         self.assertEqual(got["count"], 2)
-        self.assertTrue(u"rule_id" in got["rules"][0])
-        self.assertTrue(u"backgroundRate" in got["rules"][0])
+        self.assertTrue("rule_id" in got["rules"][0])
+        self.assertTrue("backgroundRate" in got["rules"][0])
 
     def testGetHistory(self):
         # Make some changes to a rule
@@ -863,9 +863,9 @@ class TestRuleHistoryView(ViewTest):
         got = ret.get_json()
         self.assertEqual(ret.status_code, 200, msg=ret.get_data())
         self.assertEqual(got["Rules"]["count"], 2)
-        self.assertTrue(u"rule_id" in got["Rules"]["revisions"][0])
-        self.assertTrue(u"backgroundRate" in got["Rules"]["revisions"][0])
-        self.assertTrue(u"timestamp" in got["Rules"]["revisions"][0])
+        self.assertTrue("rule_id" in got["Rules"]["revisions"][0])
+        self.assertTrue("backgroundRate" in got["Rules"]["revisions"][0])
+        self.assertTrue("timestamp" in got["Rules"]["revisions"][0])
 
     def testVersionMaxFieldLength(self):
         # Max field length of rules.version is 75
@@ -2489,9 +2489,9 @@ class TestRuleScheduledChanges(ViewTest):
         self.assertEqual(ret.status_code, 200)
         self.assertEqual(ret.status_code, 200, msg=ret.get_data())
         self.assertEqual(got["Rules scheduled change"]["count"], 8)
-        self.assertTrue(u"rule_id" in got["Rules scheduled change"]["revisions"][0])
-        self.assertTrue(u"backgroundRate" in got["Rules scheduled change"]["revisions"][0])
-        self.assertTrue(u"timestamp" in got["Rules scheduled change"]["revisions"][0])
+        self.assertTrue("rule_id" in got["Rules scheduled change"]["revisions"][0])
+        self.assertTrue("backgroundRate" in got["Rules scheduled change"]["revisions"][0])
+        self.assertTrue("timestamp" in got["Rules scheduled change"]["revisions"][0])
 
     @mock.patch("time.time", mock.MagicMock(return_value=300))
     def testRevertScheduledChange(self):

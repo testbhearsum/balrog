@@ -58,7 +58,7 @@ class JSONStringField(StringField):
         self.data = self.default_value
 
     def _value(self):
-        return json.dumps(self.data) if self.data is not None else u""
+        return json.dumps(self.data) if self.data is not None else ""
 
 
 class NullableStringField(StringField):

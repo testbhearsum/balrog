@@ -197,7 +197,7 @@ def test_merge_dicts_mismatched_types(base):
 def test_merge_dicts_unicode_and_str_are_equal():
     base = {"foo": "bar"}
     left = {"foo": "bar", "blah": "crap", "abc": "def"}
-    right = {u"foo": u"bar", u"blah": u"crap", u"ghi": u"jkl"}
+    right = {"foo": "bar", "blah": "crap", "ghi": "jkl"}
     expected = {"foo": "bar", "blah": "crap", "abc": "def", "ghi": "jkl"}
     got = merge_dicts(base, left, right)
     assert got == expected

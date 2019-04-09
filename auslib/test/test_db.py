@@ -531,13 +531,13 @@ class TestHistoryTable(unittest.TestCase, TestTableMixin, MemoryDatabaseMixin):
     def testHistoryGetChangeWithChangeID(self):
         self.test.insert(changed_by="george", id=4, foo=0)
         ret = self.test.history.getChange(change_id=1)
-        self.assertEqual(ret, {u"data_version": None, u"changed_by": u"george", u"foo": None, u"timestamp": 999, u"change_id": 1, u"id": 4})
+        self.assertEqual(ret, {"data_version": None, "changed_by": "george", "foo": None, "timestamp": 999, "change_id": 1, "id": 4})
 
     @mock.patch("time.time", mock.MagicMock(return_value=1.0))
     def testHistoryGetChangeWithDataVersion(self):
         self.test.insert(changed_by="george", id=4, foo=0)
         ret = self.test.history.getChange(data_version=1, column_values={"id": 4})
-        self.assertEqual(ret, {u"data_version": 1, u"changed_by": u"george", u"foo": 0, u"timestamp": 1000, u"change_id": 2, u"id": 4})
+        self.assertEqual(ret, {"data_version": 1, "changed_by": "george", "foo": 0, "timestamp": 1000, "change_id": 2, "id": 4})
 
     @mock.patch("time.time", mock.MagicMock(return_value=1.0))
     def testHistoryGetChangeWithDataVersionReturnNone(self):
@@ -642,7 +642,7 @@ class TestMultiplePrimaryHistoryTable(unittest.TestCase, TestMultiplePrimaryTabl
     def testMultiplePrimaryKeyHistoryGetChangeWithDataVersion(self):
         self.test.insert(changed_by="george", id1=4, id2=5, foo=0)
         ret = self.test.history.getChange(data_version=1, column_values={"id1": 4, "id2": 5})
-        self.assertEqual(ret, {u"data_version": 1, u"changed_by": u"george", u"foo": 0, u"timestamp": 1000, u"change_id": 2, u"id1": 4, u"id2": 5})
+        self.assertEqual(ret, {"data_version": 1, "changed_by": "george", "foo": 0, "timestamp": 1000, "change_id": 2, "id1": 4, "id2": 5})
 
     @mock.patch("time.time", mock.MagicMock(return_value=1.0))
     def testMultiplePrimaryKeyHistoryGetChangeWithDataVersionReturnNone(self):
@@ -5349,7 +5349,7 @@ class TestPermissions(unittest.TestCase, MemoryDatabaseMixin):
     def testGetUserRoles(self):
         got = self.permissions.getUserRoles("bob")
         got = sorted(got, key=lambda k: k["role"])
-        expected = sorted([{"data_version": 1, "role": u"releng"}, {"data_version": 1, "role": u"dev"}], key=lambda k: k["role"])
+        expected = sorted([{"data_version": 1, "role": "releng"}, {"data_version": 1, "role": "dev"}], key=lambda k: k["role"])
         self.assertEqual(got, expected)
 
     def testGetUserRolesNonExistantUser(self):
