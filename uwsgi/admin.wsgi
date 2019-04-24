@@ -91,7 +91,7 @@ class JSONCSRFProtect(CSRFProtect):
                 return token
 
 
-JSONCSRFProtect(application)
+#JSONCSRFProtect(application)
 
 
 # Secure cookies should be enabled when we're using https (otherwise the
