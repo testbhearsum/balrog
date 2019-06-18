@@ -1204,6 +1204,7 @@ class ClientTest(ClientTestBase):
 """,
         )
 
+    # TODO: Why does this fail with memory being set to '' in the rule after this refactor?
     def testGetWithResponseProductsWithAbsentRule(self):
         ret = self.client.get("/update/4/gmp/1.0/1/q/l/a/a/a/a/1/update.xml")
         self.assertUpdateEqual(
@@ -1775,6 +1776,7 @@ class ClientTestWithErrorHandlers(ClientTestCommon):
     def setUp(self):
         app.config["DEBUG"] = True
         app.config["WHITELISTED_DOMAINS"] = {"a.com": ("a",)}
+        app.config["SPECIAL_FORCE_HOSTS"] = ("http://a.com",)
         dbo.setDb("sqlite:///:memory:")
         self.metadata.create_all(dbo.engine)
         self.client = app.test_client()

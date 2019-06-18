@@ -1,3 +1,4 @@
+# TODO: kill this file once rules are in service layer
 import functools
 import logging
 from random import randint
@@ -55,39 +56,7 @@ class AUS:
         self.rand = functools.partial(randint, 0, 99)
         self.log = logging.getLogger(self.__class__.__name__)
 
-    def updates_are_disabled(self, product, channel, transaction=None):
-        cache_key = (product, channel)
-        v = cache.get("updates_disabled", cache_key)
-        if v is not None:
-            return v
-
-        where = dict(product=product, channel=channel)
-        emergency_shutoffs = dbo.emergencyShutoffs.select(where=where, transaction=transaction)
-        v = bool(emergency_shutoffs)
-        cache.put("updates_disabled", cache_key, v)
-        return v
-
     def evaluateRules(self, updateQuery, transaction=None):
-        self.log.debug("Looking for rules that apply to:")
-        self.log.debug(updateQuery)
-
-        if self.updates_are_disabled(updateQuery["product"], updateQuery["channel"], transaction) or self.updates_are_disabled(
-            updateQuery["product"], getFallbackChannel(updateQuery["channel"]), transaction
-        ):
-            log_message = "Updates are disabled for {}/{}.".format(updateQuery["product"], updateQuery["channel"])
-            self.log.debug(log_message)
-            return None, None
-
-        rules = dbo.rules.getRulesMatchingQuery(updateQuery, fallbackChannel=getFallbackChannel(updateQuery["channel"]), transaction=transaction)
-
-        # TODO: throw any N->N update rules and keep the highest priority remaining one?
-        if len(rules) < 1:
-            return None, None
-
-        rules = sorted(rules, key=lambda rule: rule["priority"], reverse=True)
-        rule = rules[0]
-        self.log.debug("Matching rule: %s" % rule)
-
         # There's a few cases where we have a matching rule but don't want
         # to serve an update:
         # 1) No mapping.

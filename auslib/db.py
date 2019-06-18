@@ -1491,6 +1491,7 @@ class Rules(AUSTable):
 
         AUSTable.__init__(self, db, dialect, scheduled_changes=True, historyClass=HistoryTable)
 
+    # TODO: This should move to the service layer
     def getPotentialRequiredSignoffs(self, affected_rows, transaction=None):
         potential_required_signoffs = {}
         rows = []
@@ -1533,15 +1534,12 @@ class Rules(AUSTable):
                     potential_required_signoffs[(row.get("product"), row.get("channel"))].append(rs)
         return potential_required_signoffs
 
-    def _isAlias(self, id_or_alias):
-        if re.match("^[a-zA-Z][a-zA-Z0-9-]*$", str(id_or_alias)):
-            return True
-        return False
+    def select(self, *args, **kwargs):
+        return cache.get("rules", "all_rules", lambda: super(Rules, self).select(*args, **kwargs))
 
+    # TODO: this method can probably go away completely after the required signoffs are in the service layer
     def insert(self, changed_by, transaction=None, dryrun=False, signoffs=None, **columns):
-        if not self.db.hasPermission(changed_by, "rule", "create", columns.get("product"), transaction):
-            raise PermissionDeniedError("%s is not allowed to create new rules for product %s" % (changed_by, columns.get("product")))
-
+        # TODO: move this block to service layer
         if not dryrun:
             potential_required_signoffs = [obj for v in self.getPotentialRequiredSignoffs([columns], transaction=transaction).values() for obj in v]
             verify_signoffs(potential_required_signoffs, signoffs)
@@ -1550,155 +1548,25 @@ class Rules(AUSTable):
         if not dryrun:
             return ret.inserted_primary_key[0]
 
-    def getOrderedRules(self, where=None, transaction=None):
-        """Returns all of the rules, sorted in ascending order"""
-        return self.select(where=where, order_by=(self.priority, self.version, self.mapping), transaction=transaction)
-
-    def getRulesMatchingQuery(self, updateQuery, fallbackChannel, transaction=None):
-        """Returns all of the rules that match the given update query.
-           For cases where a particular updateQuery channel has no
-           fallback, fallbackChannel should match the channel from the query."""
-
-        def getRawMatches():
-            where = [
-                ((self.product == updateQuery["product"]) | (self.product == null()))
-                & ((self.buildTarget == updateQuery["buildTarget"]) | (self.buildTarget == null()))
-                & ((self.headerArchitecture == updateQuery["headerArchitecture"]) | (self.headerArchitecture == null()))
-            ]
-
-            if "distVersion" in updateQuery:
-                where.extend([((self.distVersion == updateQuery["distVersion"]) | (self.distVersion == null()))])
-            else:
-                where.extend([(self.distVersion == null())])
-
-            self.log.debug("where: %s", where)
-            return self.select(where=where, transaction=transaction)
-
-        # This cache key is constructed from all parts of the updateQuery that
-        # are used in the select() to get the "raw" rule matches. For the most
-        # part, product and buildTarget will be the only applicable ones which
-        # means we should get very high cache hit rates, as there's not a ton
-        # of variability of possible combinations for those.
-        cache_key = "%s:%s:%s:%s:%s" % (
-            updateQuery["product"],
-            updateQuery["buildTarget"],
-            updateQuery["headerArchitecture"],
-            updateQuery.get("distVersion"),
-            updateQuery["force"],
-        )
-        rules = cache.get("rules", cache_key, getRawMatches)
-
-        self.log.debug("Raw matches:")
-
-        matchingRules = []
-        for rule in rules:
-            self.log.debug(rule)
-
-            # Resolve special means for channel, version, and buildID - dropping
-            # rules that don't match after resolution.
-            if not matchChannel(rule["channel"], updateQuery["channel"], fallbackChannel):
-                self.log.debug("%s doesn't match %s", rule["channel"], updateQuery["channel"])
-                continue
-            if not matchVersion(rule["version"], updateQuery["version"]):
-                self.log.debug("%s doesn't match %s", rule["version"], updateQuery["version"])
-                continue
-            if not matchBuildID(rule["buildID"], updateQuery["buildID"]):
-                self.log.debug("%s doesn't match %s", rule["buildID"], updateQuery["buildID"])
-                continue
-            if not matchMemory(rule["memory"], updateQuery.get("memory", "")):
-                self.log.debug("%s doesn't match %s", rule["memory"], updateQuery.get("memory"))
-                continue
-            # To help keep the rules table compact, multiple OS versions may be
-            # specified in a single rule. They are comma delimited, so we need to
-            # break them out and create clauses for each one.
-            if not matchSimpleExpression(rule["osVersion"], updateQuery["osVersion"]):
-                self.log.debug("%s doesn't match %s", rule["osVersion"], updateQuery["osVersion"])
-                continue
-            if not matchCsv(rule["instructionSet"], updateQuery.get("instructionSet", ""), substring=False):
-                self.log.debug("%s doesn't match %s", rule["instructionSet"], updateQuery.get("instructionSet"))
-                continue
-            if not matchCsv(rule["distribution"], updateQuery.get("distribution", ""), substring=False):
-                self.log.debug("%s doesn't match %s", rule["distribution"], updateQuery.get("distribution"))
-                continue
-            # Locales may be a comma delimited rule too, exact matches only
-            if not matchLocale(rule["locale"], updateQuery["locale"]):
-                self.log.debug("%s doesn't match %s", rule["locale"], updateQuery["locale"])
-                continue
-            if not matchBoolean(rule["mig64"], updateQuery.get("mig64")):
-                self.log.debug("%s doesn't match %s", rule["mig64"], updateQuery.get("mig64"))
-                continue
-            if not matchBoolean(rule["jaws"], updateQuery.get("jaws")):
-                self.log.debug("%s doesn't match %s", rule["jaws"], updateQuery.get("jaws"))
-                continue
-
-            matchingRules.append(rule)
-
-        self.log.debug("Reduced matches:")
-        if self.log.isEnabledFor(logging.DEBUG):
-            for r in matchingRules:
-                self.log.debug(r)
-        return matchingRules
-
-    def getRule(self, id_or_alias, transaction=None):
-        """ Returns the unique rule that matches the give rule_id or alias."""
-        where = []
-        # Figuring out which column to use ahead of times means there's only
-        # one potential index for the database to use, which should make
-        # queries faster (it will always use the most efficient one).
-        if self._isAlias(id_or_alias):
-            where.append(self.alias == id_or_alias)
-        else:
-            where.append(self.rule_id == id_or_alias)
-
-        rules = self.select(where=where, transaction=transaction)
-        found = len(rules)
-        if found > 1 or found == 0:
-            self.log.debug("Found %s rules, should have been 1", found)
-            return None
-        return rules[0]
-
     def update(self, where, what, changed_by, old_data_version, transaction=None, dryrun=False, signoffs=None):
-        # Rather than forcing callers to figure out whether the identifier
-        # they have is an id or an alias, we handle it here.
-        if "rule_id" in where and self._isAlias(where["rule_id"]):
-            where["alias"] = where["rule_id"]
-            del where["rule_id"]
-
-        # If the product is being changed, we also need to make sure the user
-        # permission to modify _that_ product.
-        if "product" in what:
-            if not self.db.hasPermission(changed_by, "rule", "modify", what["product"], transaction):
-                raise PermissionDeniedError("%s is not allowed to modify rules for product %s" % (changed_by, what["product"]))
-
+        # TODO: this block can be removed after signoffs are moved to service layer
         for current_rule in self.select(where=where, transaction=transaction):
-            if not self.db.hasPermission(changed_by, "rule", "modify", current_rule["product"], transaction):
-                raise PermissionDeniedError("%s is not allowed to modify rules for product %s" % (changed_by, current_rule["product"]))
-
             new_rule = current_rule.copy()
             new_rule.update(what)
-            if not dryrun:
-                potential_required_signoffs = [
-                    obj for v in self.getPotentialRequiredSignoffs([current_rule, new_rule], transaction=transaction).values() for obj in v
-                ]
-                verify_signoffs(potential_required_signoffs, signoffs)
+            potential_required_signoffs = [
+                obj for v in self.getPotentialRequiredSignoffs([current_rule, new_rule], transaction=transaction).values() for obj in v
+            ]
+            verify_signoffs(potential_required_signoffs, signoffs)
 
         return super(Rules, self).update(
             changed_by=changed_by, where=where, what=what, old_data_version=old_data_version, transaction=transaction, dryrun=dryrun
         )
 
     def delete(self, where, changed_by=None, old_data_version=None, transaction=None, dryrun=False, signoffs=None):
-        if "rule_id" in where and self._isAlias(where["rule_id"]):
-            where["alias"] = where["rule_id"]
-            del where["rule_id"]
-
-        product = self.select(where=where, columns=[self.product], transaction=transaction)[0]["product"]
-        if not self.db.hasPermission(changed_by, "rule", "delete", product, transaction):
-            raise PermissionDeniedError("%s is not allowed to delete rules for product %s" % (changed_by, product))
-
-        if not dryrun:
-            for current_rule in self.select(where=where, transaction=transaction):
-                potential_required_signoffs = [obj for v in self.getPotentialRequiredSignoffs([current_rule], transaction=transaction).values() for obj in v]
-                verify_signoffs(potential_required_signoffs, signoffs)
+        # TODO: remove me after signoffs are in service layer
+        for current_rule in self.select(where=where, transaction=transaction):
+            potential_required_signoffs = [obj for v in self.getPotentialRequiredSignoffs([current_rule], transaction=transaction).values() for obj in v]
+            verify_signoffs(potential_required_signoffs, signoffs)
 
         super(Rules, self).delete(changed_by=changed_by, where=where, old_data_version=old_data_version, transaction=transaction, dryrun=dryrun)
 

@@ -39,6 +39,9 @@ def int_compare(value, compstr):
     which may carry a comparison operator.
       eg int_compare(1, '>2') is False
     """
+    print(value)
+    print(type(value))
+    print(compstr)
     opfunc, operand = get_op(compstr)
     return opfunc(value, int(operand))
 

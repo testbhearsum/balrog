@@ -9,6 +9,7 @@ from flask import make_response
 
 from auslib.AUS import AUS, FAIL, SUCCEED
 from auslib.global_state import dbo
+from auslib.service.update_request import matching_releases, update_xml
 
 try:
     from urllib import unquote
@@ -134,6 +135,7 @@ def with_transaction(f):
     return wrapper
 
 
+# TODO: How can we do this without requiring the web layer to know about the database?
 @with_transaction
 def get_update_blob(transaction, **url):
     url["queryVersion"] = extract_query_version(request.url)
@@ -143,12 +145,16 @@ def get_update_blob(transaction, **url):
     # code support queries without it.
     if url["queryVersion"] == 1:
         url["osVersion"] = ""
-    # Bug 1517743 - two Firefox nightlies can't parse update.xml when it contains the usual newlines or indentations
-    squash_response = False
+
 
     query = getQueryFromURL(url)
     LOG.debug("Got query: %s", query)
-    release, update_type = AUS.evaluateRules(query, transaction=transaction)
+    blobs, response_blobs = matching_releases(query, transaction)
+    xml = update_xml(*matching_releases(query, transaction), app.config["WHITELISTED_DOMAINS"], app.config["SPECIAL_FORCE_HOSTS"])
+    response = make_response(xml)
+    response.headers["Cache-Control"] = app.cacheControl
+    response.mimetype = "text/xml"
+    return response
 
     # passing {},None returns empty xml
     if release:
@@ -218,10 +224,6 @@ def get_update_blob(transaction, **url):
         xml = xml.replace("\n", "").replace("    ", "")
 
     LOG.debug("Sending XML: %s", xml)
-    response = make_response(xml)
-    response.headers["Cache-Control"] = app.cacheControl
-    response.mimetype = "text/xml"
-    return response
 
 
 def _set_functions(function_names, function):

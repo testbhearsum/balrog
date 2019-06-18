@@ -128,6 +128,8 @@ def matchMemory(ruleMemory, queryMemory):
        If the ruleMemory is null, we match any queryMemory. If it's not
        null, we must either match exactly, or match with a camparison
        operator."""
+    print(ruleMemory)
+    print(queryMemory)
     if ruleMemory is None:
         return True
     return int_compare(queryMemory, ruleMemory)
