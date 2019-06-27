@@ -20,13 +20,16 @@ class ScheduledChangesView(AdminView):
         super(ScheduledChangesView, self).__init__()
 
     def get(self, where=None):
-        if connexion.request.args.get("all"):
-            rows = self.sc_table.select(where=where)
-        else:
-            if where is None:
-                where = {}
+        if where is None:
+            where = {}
+        rule_id = connexion.request.args.get("rule_id")
+
+        if connexion.request.args.get("all") is None:
             where["complete"] = False
-            rows = self.sc_table.select(where=where)
+        if rule_id:
+            where["base_rule_id"] = rule_id
+
+        rows = self.sc_table.select(where=where)
         ret = {"count": len(rows), "scheduled_changes": []}
         for row in rows:
             scheduled_change = {"signoffs": {}, "required_signoffs": {}}
@@ -54,7 +57,6 @@ class ScheduledChangesView(AdminView):
                 # inserts, because it doesn't exist yet!
                 if row["change_type"] != "insert":
                     original_row = self.table.select(where=base_pk)[0]
-                    scheduled_change["original_row"] = original_row
                     affected_rows.append(original_row)
                 # We don't need to consider the future version of the row when
                 # looking for required signoffs, because it won't exist when
@@ -90,6 +92,47 @@ class ScheduledChangeView(AdminView):
         self.table = table
         self.sc_table = table.scheduled_changes
         super(ScheduledChangeView, self).__init__()
+
+    def get(self, sc_id):
+        scheduled_change = {"signoffs": {}, "required_signoffs": {}}
+        base_row = {}
+        base_pk = {}
+
+        sc = self.sc_table.select({"sc_id": sc_id})
+        if not sc:
+            return problem(404, "Bad Request", "Scheduled change does not exist")
+
+        for k, v in sc[0].items():
+            if k == "data_version":
+                scheduled_change["sc_data_version"] = v
+            else:
+                if k.startswith("base_"):
+                    k = k.replace("base_", "")
+                    base_row[k] = v
+                    if getattr(self.table, k).primary_key:
+                        base_pk[k] = v
+                scheduled_change[k] = v
+
+        for signoff in self.sc_table.signoffs.select({"sc_id": sc_id}):
+            scheduled_change["signoffs"][signoff["username"]] = signoff["role"]
+
+        # No point in retrieving this for completed scheduled changes...
+        if not scheduled_change["complete"]:
+            affected_rows = []
+            # We don't need to consider the existing version of a row for
+            # inserts, because it doesn't exist yet!
+            if scheduled_change["change_type"] != "insert":
+                original_row = self.table.select(where=base_pk)[0]
+                affected_rows.append(original_row)
+            # We don't need to consider the future version of the row when
+            # looking for required signoffs, because it won't exist when
+            # enacted.
+            if scheduled_change["change_type"] != "delete":
+                affected_rows.append(base_row)
+            signoff_requirements = [obj for v in self.table.getPotentialRequiredSignoffs(affected_rows).values() for obj in v]
+            scheduled_change["required_signoffs"] = serialize_signoff_requirements(signoff_requirements)
+
+        return jsonify(scheduled_change)
 
     def _post(self, sc_id, what, transaction, changed_by, old_sc_data_version):
         if is_when_present_and_in_past_validator(what):

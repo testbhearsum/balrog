@@ -1300,7 +1300,6 @@ class TestRuleScheduledChanges(ViewTest):
                     "change_type": "update",
                     "signoffs": {},
                     "required_signoffs": {},
-                    "original_row": dbo.rules.getRule(1),
                 },
                 {
                     "sc_id": 2,
@@ -1409,7 +1408,6 @@ class TestRuleScheduledChanges(ViewTest):
                     "change_type": "delete",
                     "signoffs": {},
                     "required_signoffs": {"releng": 1},
-                    "original_row": dbo.rules.getRule(4),
                 },
                 {
                     "sc_id": 6,
@@ -1482,7 +1480,6 @@ class TestRuleScheduledChanges(ViewTest):
                     "change_type": "update",
                     "signoffs": {},
                     "required_signoffs": {"releng": 1, "relman": 1},
-                    "original_row": dbo.rules.getRule(6),
                 },
             ],
         }
@@ -1528,7 +1525,6 @@ class TestRuleScheduledChanges(ViewTest):
                     "change_type": "update",
                     "signoffs": {},
                     "required_signoffs": {},
-                    "original_row": dbo.rules.getRule(1),
                 },
                 {
                     "sc_id": 2,
@@ -1674,7 +1670,6 @@ class TestRuleScheduledChanges(ViewTest):
                     "change_type": "delete",
                     "signoffs": {},
                     "required_signoffs": {"releng": 1},
-                    "original_row": dbo.rules.getRule(4),
                 },
                 {
                     "sc_id": 6,
@@ -1747,7 +1742,6 @@ class TestRuleScheduledChanges(ViewTest):
                     "change_type": "update",
                     "signoffs": {},
                     "required_signoffs": {"releng": 1, "relman": 1},
-                    "original_row": dbo.rules.getRule(6),
                 },
             ],
         }

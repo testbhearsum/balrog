@@ -199,6 +199,14 @@ parameters:
     minimum: 0
     required: true
 
+  rule_id_query:
+    name: rule_id
+    in: query
+    description: Field value to uniquely identfiy a rule
+    type: integer
+    minimum: 1
+    required: false
+
   change_id_param:
     name: change_id
     in: path
@@ -1919,6 +1927,7 @@ paths:
         description: Returns scheduled changes for rules.
       parameters:
         - $ref: '#/parameters/allSCParam'
+        - $ref: '#/parameters/rule_id_query'
       responses:
         '200':
           description: Returns JSON object of list of all scheduled changes for rules plus total count
@@ -1939,9 +1948,6 @@ paths:
                       allOf:
                         - $ref: '#/definitions/SCSignoffsModel'
                         - $ref: '#/definitions/SCRulesItemBase'
-                        - properties:
-                            original_row:
-                              $ref: '#/definitions/RuleObject'
 
     post:
       summary: create scheduled change for rules.
@@ -1998,6 +2004,25 @@ paths:
           $ref: '#/responses/unauthorizedUser'
 
   /scheduled_changes/rules/{sc_id}:
+    get:
+      summary: Get a specific scheduled change
+      description: Get a specific scheduled change
+      tags:
+        - Scheduled Changes
+      operationId: auslib.web.admin.views.mapper.scheduled_change_rule_get
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/sc_id_param'
+      responses:
+        '200':
+          $ref: '#/responses/updateExistingObject'
+        '401':
+          $ref: '#/responses/unauthenticatedUser'
+        '403':
+          $ref: '#/responses/unauthorizedUser'
+        '404':
+          $ref: '#/responses/resourceNotFound'
     post:
       summary: Modifies existing scheduled change for a Rule.
       description: >
@@ -2190,12 +2215,6 @@ paths:
                         - $ref: '#/definitions/DataVersionNullable'
                         - $ref: '#/definitions/OptionsModel'
                         - $ref: '#/definitions/PermissionsModel'
-                        - properties:
-                            original_row:
-                              allOf:
-                                - $ref: '#/definitions/DataVersionNullable'
-                                - $ref: '#/definitions/PermissionsModel'
-                                - $ref: '#/definitions/OptionsModel'
                       required:
                         - change_type
                         - data_version
@@ -2453,14 +2472,6 @@ paths:
                         - $ref: '#/definitions/ReleaseReadOnly'
                         - $ref: '#/definitions/ReleaseDataObject'
                         - $ref: '#/definitions/ReleaseName'
-                        - properties:
-                            original_row:
-                              allOf:
-                                - $ref: '#/definitions/ReleaseDataObject'
-                                - $ref: '#/definitions/ReleaseName'
-                                - $ref: '#/definitions/DataVersionNullable'
-                                - $ref: '#/definitions/ProductNullable'
-                                - $ref: '#/definitions/ReleaseReadOnly'
                       required:
                         - change_type
                         - data_version
@@ -2727,14 +2738,6 @@ paths:
                         - $ref: '#/definitions/ProductModel'
                         - $ref: '#/definitions/RoleModel'
                         - $ref: '#/definitions/ChannelModel'
-                        - properties:
-                            original_row:
-                              allOf:
-                                - $ref: '#/definitions/DataVersionNullable'
-                                - $ref: '#/definitions/SignoffsRequiredNullable'
-                                - $ref: '#/definitions/ProductModel'
-                                - $ref: '#/definitions/RoleModel'
-                                - $ref: '#/definitions/ChannelModel'
                       required:
                         - change_type
                         - data_version
@@ -3005,13 +3008,6 @@ paths:
                         - $ref: '#/definitions/SignoffsRequiredNullable'
                         - $ref: '#/definitions/ProductModel'
                         - $ref: '#/definitions/RoleModel'
-                        - properties:
-                            original_row:
-                              allOf:
-                                - $ref: '#/definitions/DataVersionNullable'
-                                - $ref: '#/definitions/SignoffsRequiredNullable'
-                                - $ref: '#/definitions/ProductModel'
-                                - $ref: '#/definitions/RoleModel'
                       required:
                         - change_type
                         - data_version
@@ -3768,9 +3764,6 @@ paths:
                       allOf:
                         - $ref: '#/definitions/SCSignoffsModel'
                         - $ref: '#/definitions/EmergencyShutOffModel'
-                        - properties:
-                            original_row:
-                              $ref: '#/definitions/EmergencyShutOffModel'
 
     post:
       summary: Create scheduled change for emergency shut off.
