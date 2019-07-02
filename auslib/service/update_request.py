@@ -28,16 +28,24 @@ def emergency_shutoff_status(product, channels, transaction):
 
 def matching_rule(query, transaction):
     rules = []
-    # TODO: can we sort descending here, to avoid sorting?
+    # TODO: can we sort descending in the query, to avoid sorting?
     for rule in sorted(dbo.rules.select(transaction=transaction), key=lambda rule: rule["priority"], reverse=True):
         # TODO: may not work with distVersion because it doesn't exist in query version 1
+        basic_match = True
+        # TODO: this part isn't working
         for field in ("product", "buildTarget", "headerArchitecture", "distVersion"):
-            if field != query.get(field) and field is not None:
+            if rule[field] and rule[field] != query.get(field):
+                print(f"{field} didn't match for {rule['mapping']}")
+                print(rule[field])
+                print(query.get(field))
+                basic_match = False
                 break
         # Break if any of the fields above didn't match
-        else:
+        if not basic_match:
+            print("broke")
             continue
 
+        print(rule["mapping"])
         # Resolve special means for channel, version, and buildID - dropping
         # rules that don't match after resolution.
         if not matchChannel(rule["channel"], query["channel"], getFallbackChannel(query["channel"])):
@@ -49,7 +57,7 @@ def matching_rule(query, transaction):
         if not matchBuildID(rule["buildID"], query["buildID"]):
             logging.debug("%s doesn't match %s", rule["buildID"], query["buildID"])
             continue
-        if not matchMemory(rule["memory"], query.get("memory", "")):
+        if not matchMemory(rule["memory"], query.get("memory", None)):
             logging.debug("%s doesn't match %s", rule["memory"], query.get("memory"))
             continue
         # To help keep the rules table compact, multiple OS versions may be
@@ -77,6 +85,8 @@ def matching_rule(query, transaction):
 
         rules.append(rule)
 
+    print("THE END")
+    print(rules)
     return rules[0]
 
 
@@ -88,17 +98,14 @@ def matching_releases(query, transaction):
     if query["queryVersion"] == 1:
         query["osVersion"] = ""
 
-    print(query)
     fallback_channel = getFallbackChannel(query["channel"])
     if emergency_shutoff_status(query["product"], (query["channel"], fallback_channel), transaction) is True:
-        print("shutoff")
         return None, None
-    print(1)
 
+    # TODO: should/can this move to client.py, and have the result passed in?
     rule = matching_rule(query, transaction)
     if not rule or not rule["mapping"]:
         return None, None
-    print(2)
 
     blob = dbo.releases.getReleaseBlob(name=rule["mapping"], transaction=transaction)
     if not query["force"] == SUCCEED and rule["backgroundRate"] < 100:
@@ -106,11 +113,9 @@ def matching_releases(query, transaction):
             if rule["fallbackMapping"]:
                 blob = dbo.releases.getReleaseBlob(name=rule["fallbackMapping"], transaction=transaction)
 
-            print(3)
             return None, None
 
     if not blob.shouldServeUpdate(query):
-        print(4)
         return None, None
 
     response_blobs = []
@@ -130,8 +135,6 @@ def matching_releases(query, transaction):
 
 
 def update_xml(blob, response_blobs, whitelisted_domains, special_force_hosts):
-    print(blob)
-    print(response_blobs)
     if not blob:
         xml = ['<?xml version="1.0"?>']
         xml.append("<updates>")

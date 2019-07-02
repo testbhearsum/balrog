@@ -163,14 +163,14 @@ class Blob(dict):
         :return: Usually returns None. If the Blob is a SuperBlob, it returns the list
                 of return products.
         """
-        return None
+        return ()
 
     def getResponseBlobs(self):
         """
         :return: Usually returns None. It the Blob is a systemaddons superblob, it returns the
                  list of return blobs
         """
-        return None
+        return ()
 
     def getSchema(self):
         def loadSchema():

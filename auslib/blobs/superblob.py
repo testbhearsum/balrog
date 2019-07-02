@@ -13,13 +13,13 @@ class SuperBlob(Blob):
         """
         :return: Product in case of GMP supreblob
         """
-        return self.get("products")
+        return self.get("products", ())
 
     def getResponseBlobs(self):
         """
         :return: Blob names in case of systemaddon Blobs
         """
-        return self.get("blobs")
+        return self.get("blobs", ())
 
     def shouldServeUpdate(self, updateQuery):
         # Since a superblob update will always be returned.

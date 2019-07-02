@@ -75,7 +75,7 @@ def unicode(error):
     return problem(400, "Unicode Error", "Connexion was unable to parse some unicode data correctly.")
 
 
-#@app.errorhandler(Exception)
+@app.errorhandler(Exception)
 def generic(error):
     """Deals with any unhandled exceptions. If the exception is not a
     BadDataError, it will be sent to Sentry, and a 400 will be returned,

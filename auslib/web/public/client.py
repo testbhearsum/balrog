@@ -136,6 +136,8 @@ def with_transaction(f):
 
 
 # TODO: How can we do this without requiring the web layer to know about the database?
+# Probably add something in the service layer that returns the transaction? Or a wrapper around one?
+# Or maybe the entire transaction can live in the service layer somehow?
 @with_transaction
 def get_update_blob(transaction, **url):
     url["queryVersion"] = extract_query_version(request.url)
