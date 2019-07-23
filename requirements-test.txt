@@ -166,8 +166,8 @@ scandir==1.10.0 \
 entrypoints==0.3 \
     --hash=sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19 \
     --hash=sha256:c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451
-flake8-black==0.0.4 \
-    --hash=sha256:c5f02ac7ec9c0851ebf79159d298340adc0e9777097a97f2cac4bac09e2cdbeb
+flake8-black==0.1.0 \
+    --hash=sha256:6b5fe2a609fa750170da8d5b1ed7c11029bceaff025660be7f19307ec6fa0c35
 black==19.3b0 \
     --hash=sha256:09a9dcb7c46ed496a9850b76e4e825d6049ecd38b611f1224857a79bd985a8cf \
     --hash=sha256:68950ffd4d9169716bcb8719a56c07a2f4485354fec061cdd5910aa07369731c
