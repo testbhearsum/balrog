@@ -128,9 +128,9 @@ wtforms==2.2.1 \
 raven==6.10.0 \
     --hash=sha256:44a13f87670836e153951af9a3c80405d36b43097db869a36e92809673692ce4 \
     --hash=sha256:3fa6de6efa2493a7c827472e984ce9b020797d0da16f1db67197bcc23c8fae54
-connexion==1.5.3 \
-    --hash=sha256:d71932ad6de4f9558e37f474528f073b38faacdd2f9b7870e728ecb53d7eac1d \
-    --hash=sha256:a7b8629c7175017ef4bb9cb234d172aaf91ad48f769513dae21142e42668fa04 \
+connexion==2.3.0 \
+    --hash=sha256:0fce66b7bb76a5c42e580982d09b73d209d5ea324ae366193c6e0ce9199ce71d \
+    --hash=sha256:52bee0bc60edffa2ee6e0a9efc3d1cb1ea6b93df0147534caade612ac34e8036 \
     # pyup: ignore
 clickclick==1.2.2 \
     --hash=sha256:ab8f229fb9906a86634bdfc6fabfc2b665f44804170720db4f6e1d98f8a58f3d \
