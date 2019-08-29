@@ -1,5 +1,3 @@
-Balrog
-======
 |CI| |Coverage|
 
 Balrog is the software that runs the server side component of the update system used by Firefox and other Mozilla products.
