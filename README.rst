@@ -1,4 +1,3 @@
-Balrog
 ======
 |CI| |Coverage|
 
