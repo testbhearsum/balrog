@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "pip_requirements": {
+    "fileMatch": [
+      "requirements.txt",
+      "requirements-test.txt",
+      "requirements-tox.txt",
+      "agent/requirements.txt",
+      "agent/requirements-test.txt",
+      "agent/requirements-tox.txt",
+      "client/requirements/flake8.txt",
+      "client/requirements/test.py2.txt",
+      "client/requirements/test.txt"
+    ]
+  }
+}
