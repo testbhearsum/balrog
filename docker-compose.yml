@@ -135,7 +135,7 @@ services:
   # don't use it. Instead, the nginx one below is used as our entry point to more
   # closely mimic production, and support SSL.
   balrogui:
-    image: node:0.10
+    image: node:0.12
     depends_on:
       balrogadmin:
         condition: service_healthy
