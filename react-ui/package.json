@@ -48,7 +48,7 @@
     "@mozilla-frontend-infra/react-lint": "^1.2.2",
     "@neutrinojs/jest": "9.0.0-rc.0",
     "@neutrinojs/react": "9.0.0-rc.0",
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
     "dotenv-cli": "^2.0.0",
     "eslint": "^5",
     "jest": "^23",
