@@ -12,6 +12,5 @@
   ],
   "pip_requirements": {
     "fileMatch": [".*requirements.*"]
-    ]
   }
 }
