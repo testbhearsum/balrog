@@ -2,6 +2,14 @@
   "extends": [
     "config:base"
   ],
+  "packageRules": [
+    {
+      "languages": ["python"]
+    },
+    {
+      "languages": ["javascript"]
+    }
+  ],
   "pip_requirements": {
     "fileMatch": [
       "requirements.txt",
