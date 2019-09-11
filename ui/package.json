@@ -14,7 +14,7 @@
     "grunt": "0.4.5",
     "grunt-contrib-copy": "0.7.0",
     "grunt-contrib-jasmine": "0.8.2",
-    "grunt-webfont": "0.4.8",
+    "grunt-webfont": "0.5.4",
     "jasmine-given": "2.6.4",
     "lineman": "0.37.0",
     "lineman-angular": "0.3.0",
