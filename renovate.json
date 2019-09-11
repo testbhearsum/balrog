@@ -12,5 +12,8 @@
   ],
   "pip_requirements": {
     "fileMatch": [".*requirements.*"]
+  },
+  "pip_setup": {
+    "enabled": false
   }
 }
