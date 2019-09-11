@@ -45,17 +45,17 @@
     "unidiff": "^1.0.2"
   },
   "devDependencies": {
-    "@mozilla-frontend-infra/react-lint": "^1.2.2",
+    "@mozilla-frontend-infra/react-lint": "1.2.2",
     "@neutrinojs/jest": "9.0.0-rc.0",
     "@neutrinojs/react": "9.0.0-rc.0",
-    "dotenv": "^8.0.0",
-    "dotenv-cli": "^2.0.0",
-    "eslint": "^5",
-    "jest": "^23",
+    "dotenv": "8.0.0",
+    "dotenv-cli": "2.0.0",
+    "eslint": "5.15.3",
+    "jest": "23.6.0",
     "neutrino": "9.0.0-rc.0",
-    "webpack": "^4",
-    "webpack-cli": "^3",
-    "webpack-dev-server": "^3",
-    "worker-loader": "^2.0.0"
+    "webpack": "4.29.6",
+    "webpack-cli": "3.3.0",
+    "webpack-dev-server": "3.2.1",
+    "worker-loader": "2.0.0"
   }
 }
