@@ -19,7 +19,7 @@
     "lineman": "0.37.0",
     "lineman-angular": "0.3.0",
     "lineman-less": "0.1.0",
-    "phantomjs-prebuilt": "2.1.15",
+    "phantomjs-prebuilt": "2.1.16",
     "protractor": "1.8.0",
     "testem": "1.18.4",
     "follow-redirects": "1.7.0"
