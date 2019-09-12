@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "react-ui/package.json",
+        "ui/package.json"
+      ]
+    }
+  }
+}
