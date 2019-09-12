@@ -1,5 +1,9 @@
 Balrog
 ======
+
+.. image:: https://badges.greenkeeper.io/testbhearsum/balrog.svg
+   :alt: Greenkeeper badge
+   :target: https://greenkeeper.io/
 |CI| |Coverage|
 
 Balrog is the software that runs the server side component of the update system used by Firefox and other Mozilla products.
