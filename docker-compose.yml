@@ -123,8 +123,8 @@ services:
       - AUTH0_M2M_CLIENT_SECRET=updk4Gi1f6ncXDCDBH5ZclbsbIUaZmqvEXYCQLCFI56RnWlnTQXCQe6-h9n86QTv
 
 
-#  balrogreactui:
-#    build: ./react-ui
+#  balrogui:
+#    build: ./ui
 #    depends_on:
 #      balrogadmin:
 #        condition: service_healthy
@@ -135,33 +135,13 @@ services:
 #      - HOST=0.0.0.0
 #      - PORT=9000
 #    volumes:
-#      - ./react-ui:/app
+#      - ./ui:/app
 #      - node_modules:/app/node_modules
 #    entrypoint:
 #      - /bin/bash
 #      - --login
 #      - -c
 #      - yarn install && yarn start
-
-
-  # This container exists solely to have something automatically rebuilding the UI
-  # in the background during local development. Although it runs a web server, we
-  # don't use it. Instead, the nginx one below is used as our entry point to more
-  # closely mimic production, and support SSL.
-  balrogui:
-    image: node:0.10
-    depends_on:
-      balrogadmin:
-        condition: service_healthy
-    volumes:
-      - ./ui:/app
-    environment:
-      - WEB_PORT=6060
-      - HOST_PROXY=balrogadmin
-      - HOST_PROXY_PORT=7070
-    entrypoint:
-      - /bin/bash
-      - /app/docker-entrypoint.sh
 
 
   nginx:

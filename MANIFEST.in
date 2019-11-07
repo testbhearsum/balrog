@@ -17,7 +17,6 @@ exclude agent
 exclude client
 exclude docs
 exclude docker-compose.yml
-exclude react-ui
 exclude requirements
 exclude scripts
 exclude tests
@@ -27,7 +26,6 @@ exclude version.json
 recursive-exclude agent *
 recursive-exclude client *
 recursive-exclude docs *
-recursive-exclude react-ui *
 recursive-exclude requirements *
 recursive-exclude scripts *
 recursive-exclude tests *
