@@ -405,7 +405,7 @@ responses:
         data_version: [1,2,3,4,5]
 
 paths:
-  /csrf_token:
+  /api/api/csrf_token:
     get:
       summary: Returns valid csrf_token in response header.
       description: >
@@ -430,7 +430,7 @@ paths:
           examples:
             text/html: "csrf_token: 1491342563##c4e6fef0b978e6c89af9ff1015e67b9ca7c45d14"
 
-  /rules/history:
+  /api/api/rules/history:
     get:
       summary: Returns a list of all rules and it's scheduled change history.
       description: >
@@ -459,7 +459,7 @@ paths:
         '400':
           $ref: '#/responses/invalidFormData'
 
-  /permissions/history:
+  /api/api/permissions/history:
     get:
       summary: Returns a list of permissions and it's scheduled change history.
       description: >
@@ -487,7 +487,7 @@ paths:
         '400':
           $ref: '#/responses/invalidFormData'
 
-  /required_signoffs/product/history:
+  /api/api/required_signoffs/product/history:
     get:
       summary: Returns a list of product required signoff and it's scheduled change history.
       description: >
@@ -523,7 +523,7 @@ paths:
         '400':
           $ref: '#/responses/invalidFormData'
 
-  /required_signoffs/permissions/history:
+  /api/required_signoffs/permissions/history:
     get:
       summary: Returns a list of permissions required signoffs and it's scheduled change history.
       description: >
@@ -558,7 +558,7 @@ paths:
         '400':
           $ref: '#/responses/invalidFormData'
 
-  /scheduled_change/diff/release/{sc_id}:
+  /api/scheduled_change/diff/release/{sc_id}:
     get:
       summary: Returns a diff of the sc for the provided id
       description: >
@@ -583,7 +583,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /releases:
+  /api/releases:
     get:
       summary: "Returns a JSON Object containing metadata about Releases in Balrog's database"
       description: >
@@ -683,7 +683,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /releases/{release}:
+  /api/releases/{release}:
     get:
       summary: "Returns the 'data' portion of the named Release, which is a JSON Object."
       description: >
@@ -804,7 +804,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /releases/{release}/read_only:
+  /api/releases/{release}/read_only:
     get:
       summary: Returns whether or not the named Release is marked as read_only
       description: >
@@ -888,7 +888,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /releases/columns/{column}:
+  /api/releases/columns/{column}:
     get:
       summary: Returns a JSON Object containing the unique values for the given release column
       description: >
@@ -910,7 +910,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /releases/{release}/builds/{platform}/{locale}:
+  /api/releases/{release}/builds/{platform}/{locale}:
     get:
       summary: "Returns the platform+locale specific data of the named Release"
       description: >
@@ -971,7 +971,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /required_signoffs/product:
+  /api/required_signoffs/product:
     get:
       summary: Returns all the product required signoffs
       description: >
@@ -1078,7 +1078,7 @@ paths:
         '400':
           $ref: '#/responses/invalidFormData'
 
-  /required_signoffs/product/revisions:
+  /api/required_signoffs/product/revisions:
     get:
       summary: Returns all the product required signoffs revisions
       description: >
@@ -1133,7 +1133,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /required_signoffs/permissions:
+  /api/required_signoffs/permissions:
     get:
       summary: Returns all the permissions required signoffs
       description: >
@@ -1235,7 +1235,7 @@ paths:
         '400':
           $ref: '#/responses/invalidFormData'
 
-  /required_signoffs/permissions/revisions:
+  /api/required_signoffs/permissions/revisions:
     get:
       summary: Returns all the permissions required signoffs revisions
       description: >
@@ -1287,7 +1287,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /users:
+  /api/users:
     get:
       summary: Returns all of Users in Balrog's DB
       description: >
@@ -1317,7 +1317,7 @@ paths:
                   format: ascii
                 example: ["balrogadmin"]
 
-  /users/{username}:
+  /api/users/{username}:
     get:
       summary: Returns all of the details about the user
       description: >
@@ -1380,7 +1380,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /users/{username}/permissions:
+  /api/users/{username}/permissions:
     get:
       summary: Returns all of the details about the user
       description: >
@@ -1408,7 +1408,7 @@ paths:
                 options:
                   actions: ['create', 'modify']
 
-  /users/{username}/roles/{role}:
+  /api/users/{username}/roles/{role}:
     put:
       summary: Grants the given username the given role
       description: >
@@ -1465,7 +1465,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /users/{username}/permissions/{permission}:
+  /api/users/{username}/permissions/{permission}:
     get:
       summary: Returns the details of the named permission
       description: >
@@ -1590,7 +1590,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /rules:
+  /api/api/rules:
     get:
       summary: Returns filtered list of Rules from Balrog's DB
       description: >
@@ -1659,7 +1659,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /rules/{id_or_alias}:
+  /api/rules/{id_or_alias}:
     get:
       summary: Returns a rule identified by the id or alias
       description: >
@@ -1796,7 +1796,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /rules/{rule_id}/revisions:
+  /api/rules/{rule_id}/revisions:
     get:
       summary: Fetches all revisions of a Rule
       description: Fetches list and count of all the revisions of the rule given by rule_id
@@ -1892,7 +1892,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /rules/columns/{column}:
+  /api/rules/columns/{column}:
     get:
       summary: Returns a JSON Object containing the unique values for the given column.
       description: >
@@ -1914,7 +1914,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/rules:
+  /api/scheduled_changes/rules:
     get:
       summary: Returns scheduled changes for rules.
       description: >
@@ -2006,7 +2006,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/rules/{sc_id}:
+  /api/scheduled_changes/rules/{sc_id}:
     get:
       summary: Return the scheduled change requested
       description: >
@@ -2111,7 +2111,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/rules/{sc_id}/revisions:
+  /api/scheduled_changes/rules/{sc_id}/revisions:
     get:
       summary: Returns previous versions of the scheduled change
       description: >
@@ -2187,7 +2187,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/permissions:
+  /api/scheduled_changes/permissions:
     get:
       summary: Returns scheduled changes for permissions.
       description: >
@@ -2283,7 +2283,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/permissions/{sc_id}:
+  /api/scheduled_changes/permissions/{sc_id}:
     post:
       summary: Modifies existing scheduled change for a Permission.
       description: >
@@ -2356,7 +2356,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/permissions/{sc_id}/revisions:
+  /api/scheduled_changes/permissions/{sc_id}/revisions:
     get:
       summary: Returns previous versions of the scheduled change
       description: >
@@ -2442,7 +2442,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/releases:
+  /api/scheduled_changes/releases:
     get:
       summary: Returns scheduled changes for releases.
       description: >
@@ -2543,7 +2543,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/releases/{sc_id}:
+  /api/scheduled_changes/releases/{sc_id}:
     get:
       summary: Return the scheduled change requested
       description: >
@@ -2665,7 +2665,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/releases/{sc_id}/revisions:
+  /api/scheduled_changes/releases/{sc_id}/revisions:
     get:
       summary: Returns previous versions of the scheduled change
       description: >
@@ -2755,7 +2755,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/required_signoffs/product:
+  /api/scheduled_changes/required_signoffs/product:
     get:
       summary: Returns scheduled changes for required signoffs of Products.
       description: >
@@ -2861,7 +2861,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/required_signoffs/product/{sc_id}:
+  /api/scheduled_changes/required_signoffs/product/{sc_id}:
     post:
       summary: Modifies existing scheduled change for a Product Required Signoff.
       description: >
@@ -2936,7 +2936,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/required_signoffs/product/{sc_id}/revisions:
+  /api/scheduled_changes/required_signoffs/product/{sc_id}/revisions:
     get:
       summary: Returns previous versions of the scheduled change
       description: >
@@ -3026,7 +3026,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/required_signoffs/permissions:
+  /api/scheduled_changes/required_signoffs/permissions:
     get:
       summary: Returns scheduled changes for required signoffs of Permissions.
       description: >
@@ -3128,7 +3128,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/required_signoffs/permissions/{sc_id}:
+  /api/scheduled_changes/required_signoffs/permissions/{sc_id}:
     post:
       summary: Modifies existing scheduled change for a Permission Required Signoff.
       description: >
@@ -3202,7 +3202,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/required_signoffs/permissions/{sc_id}/revisions:
+  /api/scheduled_changes/required_signoffs/permissions/{sc_id}/revisions:
     get:
       summary: Returns previous versions of the scheduled change
       description: >
@@ -3290,7 +3290,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/rules/{sc_id}/enact:
+  /api/scheduled_changes/rules/{sc_id}/enact:
     post:
       summary: Execute the scheduled change for the rule.
       description: >
@@ -3315,7 +3315,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/permissions/{sc_id}/enact:
+  /api/scheduled_changes/permissions/{sc_id}/enact:
     post:
       summary: Execute the scheduled change for the permission.
       description: >
@@ -3340,7 +3340,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/releases/{sc_id}/enact:
+  /api/scheduled_changes/releases/{sc_id}/enact:
     post:
       summary: Execute the scheduled change for the release.
       description: >
@@ -3365,7 +3365,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/required_signoffs/product/{sc_id}/enact:
+  /api/scheduled_changes/required_signoffs/product/{sc_id}/enact:
     post:
       summary: Execute the scheduled change for the required signoffs for product.
       description: >
@@ -3390,7 +3390,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/required_signoffs/permissions/{sc_id}/enact:
+  /api/scheduled_changes/required_signoffs/permissions/{sc_id}/enact:
     post:
       summary: Execute the scheduled change for the required signoffs for permission.
       description: >
@@ -3415,7 +3415,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/rules/{sc_id}/signoffs:
+  /api/scheduled_changes/rules/{sc_id}/signoffs:
     post:
       summary: Signs off on the given Scheduled Change for Rule.
       description: >
@@ -3472,7 +3472,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/permissions/{sc_id}/signoffs:
+  /api/scheduled_changes/permissions/{sc_id}/signoffs:
     post:
       summary: Signs off on the given Scheduled Change for Permission.
       description: >
@@ -3529,7 +3529,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/releases/{sc_id}/signoffs:
+  /api/scheduled_changes/releases/{sc_id}/signoffs:
     post:
       summary: Signs off on the given Scheduled Change for Release.
       description: >
@@ -3586,7 +3586,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/required_signoffs/product/{sc_id}/signoffs:
+  /api/scheduled_changes/required_signoffs/product/{sc_id}/signoffs:
     post:
       summary: Signs off on the given Scheduled Change for Product Required Signoff.
       description: >
@@ -3643,7 +3643,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/required_signoffs/permissions/{sc_id}/signoffs:
+  /api/scheduled_changes/required_signoffs/permissions/{sc_id}/signoffs:
     post:
       summary: Signs off on the given Scheduled Change for Permission Required Signoff.
       description: >
@@ -3700,7 +3700,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /emergency_shutoff:
+  /api/emergency_shutoff:
     get:
       summary: List of emergency shut off.
       description: >
@@ -3743,7 +3743,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /emergency_shutoff/{product}/{channel}:
+  /api/emergency_shutoff/{product}/{channel}:
     get:
       summary: Emergency shut off.
       description: >
@@ -3795,7 +3795,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/emergency_shutoff:
+  /api/scheduled_changes/emergency_shutoff:
     get:
       summary: Returns scheduled changes for emergency shut off.
       description: >
@@ -3877,7 +3877,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/emergency_shutoff/{sc_id}:
+  /api/scheduled_changes/emergency_shutoff/{sc_id}:
     post:
       summary: Modifies existing scheduled change for a Emergency shut off.
       description: >
@@ -3944,7 +3944,7 @@ paths:
         '404':
           $ref: '#/responses/resourceNotFound'
 
-  /scheduled_changes/emergency_shutoff/{sc_id}/enact:
+  /api/scheduled_changes/emergency_shutoff/{sc_id}/enact:
     post:
       summary: Execute the scheduled change for the emergency shut off.
       description: >
@@ -3965,7 +3965,7 @@ paths:
         '403':
           $ref: '#/responses/unauthorizedUser'
 
-  /scheduled_changes/emergency_shutoff/{sc_id}/signoffs:
+  /api/scheduled_changes/emergency_shutoff/{sc_id}/signoffs:
     post:
       summary: Signs off on the given emergency shut off.
       description: Signs off on the given emergency shut off.
