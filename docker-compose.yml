@@ -6,7 +6,7 @@ services:
   balrogadmin:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.test
       args:
         PYTHON_VERSION: 3.7
     depends_on:
@@ -66,7 +66,7 @@ services:
   balrogpub:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.test
       args:
         PYTHON_VERSION: 3.7
     depends_on:
@@ -105,8 +105,6 @@ services:
       - ./agent:/app
     links:
       - nginx
-    logging:
-      driver: none
     environment:
       - BALROG_API_ROOT=http://nginx:8011/api
       - BALROG_USERNAME=balrogagent
@@ -196,6 +194,8 @@ services:
       dockerfile: Dockerfile.database
     expose:
       - "3306"
+    ports:
+      - "3306:3306"
     environment:
       - MYSQL_DATABASE=balrog
       - MYSQL_USER=balrogadmin
